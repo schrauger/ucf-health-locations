@@ -8,7 +8,7 @@ Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
 */
-require_once( get_plugin_directory() . "/Tax-meta-class/Tax-meta-class/Tax-meta-class.php" ); // lets the 'location' taxonomy have custom fields for lat/long etc
-require_once ( get_plugin_directory() . "/ucf_health_locations.php" );
+require_once( plugin_dir_path( __FILE__ ) . "Tax-Meta-Class/Tax-meta-class/Tax-meta-class.php" ); // lets the 'location' taxonomy have custom fields for lat/long etc
+require_once ( plugin_dir_path( __FILE__ ) . "ucf_health_locations.php" );
 
 ?>

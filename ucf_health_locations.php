@@ -12,13 +12,14 @@ class ucf_health_locations {
 
 	function __construct() {
 		// Custom taxonomy (category specifically for doctors)
-		add_action( 'init', array( $this, 'create_locations_taxonomy' ) );
-		add_action( 'init', array( $this, 'create_specialities_taxonomy' ) );
-		add_action( 'init', array( $this, 'link_custom_taxonomies_with_custom_post_types' ) );
+		add_action( 'init', array( $this, 'create_locations_taxonomy' ) ,20 );
+		add_action( 'init', array( $this, 'create_specialities_taxonomy' ) , 20);
+		add_action( 'init', array( $this, 'link_custom_taxonomies_with_custom_post_types' ) , 20 );
 
 		// Custom fields for a custom taxonomy.
 		$this->locations_meta_fields();
 	}
+
 
 	function create_locations_taxonomy() {
 		register_taxonomy(
@@ -59,8 +60,9 @@ class ucf_health_locations {
 			// link our custom taxonomies and custom post types
 			// Better safe than sorry when registering custom taxonomies for custom post types:
 			// http://codex.wordpress.org/Function_Reference/register_taxonomy#Usage
-			register_taxonomy_for_object_type( 'specialities', 'doctors' );
-			register_taxonomy_for_object_type( 'locations', 'doctors' );
+			register_taxonomy_for_object_type( self::taxonomy_locations, 'doctors' );
+			register_taxonomy_for_object_type( self::taxonomy_specialities, 'doctors' );
+			//echo 'hi';
 		}
 	}
 
@@ -116,22 +118,22 @@ class ucf_health_locations {
 			/*
 			 * Human Readable Title
 			 */
-			$my_meta->addText( $prefix . 'title', array(
-				'name' => __( 'Title ', 'tax-meta' ), /* note that the second argument MUST be a string literal.
+			//$my_meta->addText( $prefix . 'title', array(
+				/*'name' => __( 'Title ', 'tax-meta' ),*/ /* note that the second argument MUST be a string literal.
                                                          * it CANNOT be a constant or variable, because it is _parsed_
                                                          * by an automation tool for translation. the parser simply looks
                                                          * for the __() function; it does not interpret php code.
                                                         */
-				'desc' => 'A human-readable name for the location'
-			) );
+				//'desc' => 'A human-readable name for the location'
+			//) );
 
 			/*
 			 * Description/more details
 			 */
-			$my_meta->addTextarea( $prefix . 'description', array(
+			/*$my_meta->addTextarea( $prefix . 'description', array(
 				'name' => __( 'Description/Notes ', 'tax-meta' ),
 				'desc' => 'Description or notes about the location'
-			) );
+			) );*/
 
 			/*
 			 * Phone numbers (repeater block with description and number)
