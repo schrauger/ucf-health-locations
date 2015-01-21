@@ -3,7 +3,7 @@
 Plugin Name: UCF Health locations taxonomy
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: A custom taxonomy with custom fields for latitude, longitude, phone, etc.
-Version: 0.1
+Version: 1.0
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
