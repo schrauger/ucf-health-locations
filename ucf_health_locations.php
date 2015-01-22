@@ -137,19 +137,24 @@ class ucf_health_locations {
 
 			/*
 			 * Phone numbers (repeater block with description and number)
+			 * Edit: Not doing repeater blocks. The 3rd-party code is a little buggy and needs to be fixed by me before it can be used.
 			 */
-			$repeater_fields_phone[ ] = $my_meta->addText( $prefix . 'phone_description', array( 'name' => __( 'Phone Type (Phone, Fax, etc) ', 'tax-meta' ) ), true );
+			/*$repeater_fields_phone[ ] = $my_meta->addText( $prefix . 'phone_description', array( 'name' => __( 'Phone Type (Phone, Fax, etc) ', 'tax-meta' ) ), true );
 			$repeater_fields_phone[ ] = $my_meta->addNumber( $prefix . 'phone_number', array( 'name' => __( 'Phone Number ', 'tax-meta' ) ), true );
 			$my_meta->addRepeaterBlock( $prefix . 'phone_', array(
 				'inline' => true,
 				'name'   => __( 'Phone Numbers', 'tax-meta' ),
 				'fields' => $repeater_fields_phone
+			) );*/
+			$my_meta->addNumber( $prefix . 'phone_number', array(
+				'name' => __( 'Phone Number ', 'tax-meta' )
 			) );
 
 			/*
 			 * Hours (repeater block with day(s)-of-week, opening hours, and closing hours)
+			 * Edit: Not doing repeater blocks. The 3rd-party code is a little buggy and needs to be fixed by me before it can be used.
 			 */
-			$repeater_fields_hours[ ] = $my_meta->addText( $prefix . 'hours_day_of_week', array(
+			/*$repeater_fields_hours[ ] = $my_meta->addText( $prefix . 'hours_day_of_week', array(
 				'name' => __( 'Day(s) of week', 'tax-meta' ),
 				'desc' => 'Human-readable day of week. Ex: Monday, Tuesday-Thursday, Weekdays, Weekends'
 			), true );
@@ -159,6 +164,10 @@ class ucf_health_locations {
 				'inline' => true,
 				'name'   => __( 'Hours of Operation', 'tax-meta' ),
 				'fields' => $repeater_fields_hours
+			) );*/
+			$my_meta->addTextarea( $prefix . 'hours_of_operation', array(
+				'name' => __( 'Hours of Operation ', 'tax-meta' ),
+				'desc' => 'Human-readable description of open hours. Ex: Monday 8:30am-7:00pm, Tuesday-Thursday 9:00am-7:00pm'
 			) );
 
 			/*
