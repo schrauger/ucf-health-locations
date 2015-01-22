@@ -5,19 +5,31 @@
  * User: stephen
  * Date: 1/21/15
  * Time: 4:36 PM
+ *
+ * This plugin was created in order to decouple the theme from the site-specific functions. However, the
+ * theme won't run quite properly if this plugin is disabled, since there are still some tightly coupled
+ * elements on the locations page.
  */
 class ucf_health_locations {
-	const taxonomy_locations    = 'locations';
-	const taxonomy_specialities = 'specialities';
+	const taxonomy_locations        = 'locations';
+	const taxonomy_specialities     = 'specialities';
+	const html_input_name_locations = 'ucf_health_locations';
+	const meta_taxonomy_prefix      = 'locations_';
+
 
 	function __construct() {
 		// Custom taxonomy (category specifically for doctors)
-		add_action( 'init', array( $this, 'create_locations_taxonomy' ) ,20 );
-		add_action( 'init', array( $this, 'create_specialities_taxonomy' ) , 20);
-		add_action( 'init', array( $this, 'link_custom_taxonomies_with_custom_post_types' ) , 20 );
+		add_action( 'init', array( $this, 'create_locations_taxonomy' ), 20 );
+		add_action( 'init', array( $this, 'create_specialities_taxonomy' ), 20 );
+		add_action( 'init', array( $this, 'link_custom_taxonomies_with_custom_post_types' ), 20 );
 
 		// Custom fields for a custom taxonomy.
 		$this->locations_meta_fields();
+
+		// Add the javascript to the locations page
+		$this->add_javascript_to_locations();
+
+		add_filter( 'the_content', array( $this, 'insert_location_content' ) );
 	}
 
 
@@ -56,13 +68,12 @@ class ucf_health_locations {
 	 * Note; this should be called after creating the two taxonomies.
 	 */
 	function link_custom_taxonomies_with_custom_post_types() {
-		if (post_type_exists('doctors')) {
+		if ( post_type_exists( 'doctors' ) ) {
 			// link our custom taxonomies and custom post types
 			// Better safe than sorry when registering custom taxonomies for custom post types:
 			// http://codex.wordpress.org/Function_Reference/register_taxonomy#Usage
 			register_taxonomy_for_object_type( self::taxonomy_locations, 'doctors' );
 			register_taxonomy_for_object_type( self::taxonomy_specialities, 'doctors' );
-			//echo 'hi';
 		}
 	}
 
@@ -76,7 +87,7 @@ class ucf_health_locations {
 			/*
 			* prefix of meta keys, optional
 			*/
-			$prefix = self::taxonomy_locations . '_';
+			$prefix = self::meta_taxonomy_prefix;
 
 			/*
 			* configure your meta box
@@ -119,12 +130,12 @@ class ucf_health_locations {
 			 * Human Readable Title
 			 */
 			//$my_meta->addText( $prefix . 'title', array(
-				/*'name' => __( 'Title ', 'tax-meta' ),*/ /* note that the second argument MUST be a string literal.
+			/*'name' => __( 'Title ', 'tax-meta' ),*/ /* note that the second argument MUST be a string literal.
                                                          * it CANNOT be a constant or variable, because it is _parsed_
                                                          * by an automation tool for translation. the parser simply looks
                                                          * for the __() function; it does not interpret php code.
                                                         */
-				//'desc' => 'A human-readable name for the location'
+			//'desc' => 'A human-readable name for the location'
 			//) );
 
 			/*
@@ -185,6 +196,14 @@ class ucf_health_locations {
 			) );
 
 			/*
+			 * Address - street/postal address
+			 */
+			$my_meta->addTextarea( $prefix . 'address', array(
+				'name' => __( 'Address ', 'tax-meta' ),
+				'desc' => 'Street address, city, state, zip'
+			) );
+
+			/*
  			 * Url - link to the location specific home page
 			 */
 			$my_meta->addText( $prefix . 'url', array(
@@ -192,11 +211,67 @@ class ucf_health_locations {
 				'desc' => "Link to the location's home page"
 			) );
 
+
 			//Finish Meta Box Declaration
 			$my_meta->Finish();
 		}
 	}
 
+	/*
+	 * Simply adds the location javascript if the page is locations
+	 */
+	function add_javascript_to_locations() {
+		if ( is_page( 'locations' ) ) {
+			wp_register_script( 'locations_google_map', plugin_dir_path( __FILE__ ) . 'js/google-map.js' );
+			wp_enqueue_script( 'locations_google_map' );
+		}
+	}
+
+	/*
+	 * Inserts the location details for each location on the 'location' page. This is used
+	 * by javascript to build the google map points.
+	 */
+	function insert_location_content( $content ) {
+		//echo $content;
+		// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
+		$terms          = get_terms( self::taxonomy_locations );
+		$term_meta_data = array( 'phone_number', 'hours_of_operation', 'latitude', 'longitude', 'address', 'url' );
+		$is_first_item  = true;
+
+		$locations = [ ];
+
+
+		foreach ( $terms as $term ) {
+
+			// 1. Get the meta information about that term.
+			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'phone_number' );
+			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'hours_of_operation' );
+			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'latitude' );
+			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'longitude' );
+			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'address' );
+			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'url' );
+
+			$this_location_info = [ ];
+
+			// 2. Create a key->value map of our meta data (and built-in data).
+			foreach ( $term_meta_data as $meta ) {
+				$this_location_info[ $meta ] = get_tax_meta( $term->term_id, $meta ); // set key->value
+			}
+			$this_location_info[ 'name' ]        = $term->name; // human readable title
+			$this_location_info[ 'description' ] = $term->description; // description
+
+			// 3. Add this map to the array of all locations, with the key being the location slug.
+			$locations[ $term->slug ] = $this_location_info;
+
+		}
+		// All location data is in the array. Output it.
+
+		$content .= '<input type="hidden" name="' . self::html_input_name_locations . '" data-locations=' . "'" . json_encode( $locations ) . "'" . ' />';
+
+		return $content;
+
+
+	}
 
 }
 
