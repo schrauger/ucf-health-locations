@@ -157,8 +157,11 @@ class ucf_health_locations {
 				'name'   => __( 'Phone Numbers', 'tax-meta' ),
 				'fields' => $repeater_fields_phone
 			) );*/
-			$my_meta->addNumber( $prefix . 'phone_number', array(
-				'name' => __( 'Phone Number ', 'tax-meta' )
+			$my_meta->addTextarea( $prefix . 'phone_number', array(
+				'name' => __( 'Phone Number(s) ', 'tax-meta' )
+			) );
+			$my_meta->addTextarea( $prefix . 'fax_number', array(
+				'name' => __( 'Fax Number(s) ', 'tax-meta' )
 			) );
 
 			/*
@@ -234,43 +237,118 @@ class ucf_health_locations {
 	function insert_location_content( $content ) {
 		//echo $content;
 		// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
-		$terms          = get_terms( self::taxonomy_locations );
-		$term_meta_data = array( 'phone_number', 'hours_of_operation', 'latitude', 'longitude', 'address', 'url' );
+		$terms = get_terms( self::taxonomy_locations );
+
+		$term_meta_data = array(
+			'phone_number',
+			'fax_number',
+			'hours_of_operation',
+			'latitude',
+			'longitude',
+			'address',
+			'url'
+		);
 		$is_first_item  = true;
 
-		$locations = [ ];
+		$locations      = [ ];
+
+		/*
+		 * Visible list of locations.
+		 */
+		$selector_panel = '';
+		$selector_panel_list = '';
+		$selector_panel_info = '';
 
 
-		foreach ( $terms as $term ) {
+		foreach ( $terms as $location ) {
+
+			/*
+			 * Invisible variable with location meta data in a JSON parsable object.
+			 */
 
 			// 1. Get the meta information about that term.
-			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'phone_number' );
-			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'hours_of_operation' );
-			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'latitude' );
-			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'longitude' );
-			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'address' );
-			$saved_data = get_tax_meta( $term->term_id, self::meta_taxonomy_prefix . 'url' );
 
 			$this_location_info = [ ];
 
 			// 2. Create a key->value map of our meta data (and built-in data).
 			foreach ( $term_meta_data as $meta ) {
-				$this_location_info[ $meta ] = get_tax_meta( $term->term_id, $meta ); // set key->value
+				$this_location_info[ $meta ] = get_tax_meta( $location->term_id, self::meta_taxonomy_prefix . $meta ); // set key->value
 			}
-			$this_location_info[ 'name' ]        = $term->name; // human readable title
-			$this_location_info[ 'description' ] = $term->description; // description
+			$this_location_info[ 'slug' ]        = $location->slug;
+			$this_location_info[ 'name' ]        = $location->name; // human readable title
+			$this_location_info[ 'description' ] = $location->description; // description
 
 			// 3. Add this map to the array of all locations, with the key being the location slug.
-			$locations[ $term->slug ] = $this_location_info;
+			$locations[ $location->slug ] = $this_location_info;
+
+			// 4. Create an always-visible list entry (outside of the google map interface)
+			$selector_panel_list .= $this->selector_panel_list_item( $this_location_info );
+			$selector_panel_info .= $this->selector_panel_list_info( $this_location_info );
 
 		}
+
+		$selector_panel .= '<h2 >Select a location to learn more:</h2 >';
+		$selector_panel .= '<div class="selector-panel locations" >';
+		$selector_panel .= '	<div class="left"><ul>';
+		$selector_panel .= $selector_panel_list;
+		$selector_panel .= '	</ul></div>';
+		$selector_panel .= '	<div class="right">';
+		$selector_panel .= $selector_panel_info;
+		$selector_panel .= '	</div>';
+		$selector_panel .= '</div>';
+
 		// All location data is in the array. Output it.
+		$json_object = '<input type="hidden" name="' . self::html_input_name_locations . '" data-locations=' . "'" . json_encode( $locations ) . "'" . ' />';
 
-		$content .= '<input type="hidden" name="' . self::html_input_name_locations . '" data-locations=' . "'" . json_encode( $locations ) . "'" . ' />';
+		$map = '<section><div id="map" style="height:460px; width:645px;"></div></section>';
+		return $content . $map . $json_object . $selector_panel;
 
-		return $content;
+	}
 
+	/**
+	 * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
+	 * @param $location_array
+	 *
+	 * @return string
+	 */
+	function selector_panel_list_item( $location_array ) {
+		$location = json_decode(json_encode($location_array));
+		return "<li class='locations $location->slug'><a href='#'>$location->name</a></li>";
 
+	}
+
+	/**
+	 * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
+	 * @param $location_array
+	 *
+	 * @return string
+	 */
+	function selector_panel_list_info( $location_array ) {
+		//print_r($location_array);
+		$location = json_decode(json_encode($location_array));
+		$return = "";
+		$return .= "<div class='$location->slug-info info'>";
+		$return .= "	<ul class=''>";
+		$return .= "		<div class='third'>";
+		$return .= "			<strong>Address:</strong><br />";
+		$return .= "			<p>" . nl2br($location->address) . "</p>";
+		$return .= "			<a href='#' class='green map'>Map This Location</a>";
+		$return .= "		</div>";
+		$return .= "		<div class='third'>";
+		$return .= "			<strong>Phone:</strong><br />";
+		$return .= "			<p>" . nl2br($location->phone_number) . "</p>";
+		$return .= "			<strong>Fax:</strong><br />";
+		$return .= "			<p>" . nl2br($location->fax_number) . "</p>";
+		$return .= "		</div>";
+		$return .= "		<div class='third'>";
+		$return .= "			<strong>Hours:</strong></br>";
+		$return .= "			<p>" . nl2br($location->hours_of_operation) . "</p>";
+		$return .= "			<p class='notice' >If you have a medical emergency, call 911.</p >";
+		$return .= "		</div>";
+		$return .= "    </ul>";
+		$return .= "</div>";
+
+		return $return;
 	}
 
 }
