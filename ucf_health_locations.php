@@ -27,7 +27,8 @@ class ucf_health_locations {
 		$this->locations_meta_fields();
 
 		// Add the javascript to the locations page
-		$this->add_javascript_to_locations();
+		//$this->add_javascript_to_locations();
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_javascript_to_locations') );
 
 		add_filter( 'the_content', array( $this, 'insert_location_content' ) );
 	}
@@ -224,10 +225,12 @@ class ucf_health_locations {
 	 * Simply adds the location javascript if the page is locations
 	 */
 	function add_javascript_to_locations() {
-		if ( is_page( 'locations' ) ) {
-			wp_register_script( 'locations_google_map', plugin_dir_path( __FILE__ ) . 'js/google-map.js' );
-			wp_enqueue_script( 'locations_google_map' );
-		}
+		//wp_reset_query();
+		//if ( is_page( 'locations' ) ) {
+			//echo 'ok';
+			wp_register_script( 'locations_google_map', plugins_url('js/google-map.js', __FILE__ ), array('jquery') );
+			wp_enqueue_script( 'locations_google_map');
+		//} else { echo 'nada';}
 	}
 
 	/*

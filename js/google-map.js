@@ -1,4 +1,4 @@
-function initialize() {
+function setup_google_map() {
     var currentInfoWindow = new google.maps.InfoWindow();
     var infoWindows = {};
     var markers = {};
@@ -57,7 +57,7 @@ function initialize() {
             title: point[ 'name' ]
         });
 
-        var infoWindowHTML = jQuery(info_window_html(point));
+        var infoWindowHTML = info_window_html(point);
         infoWindows[ key ] = {}
         infoWindows[ key ] = new google.maps.InfoWindow({
             content: infoWindowHTML
@@ -96,12 +96,13 @@ function info_window_html(location_object) {
     var return_string = '';
     return_string += '<div class="info_window">';
     return_string += info_window_html_div_if_exists(location_object, 'name');
-    return_string += info_window_html_div_if_exists(location_object, 'description');
-    return_string += info_window_html_div_if_exists(location_object, 'address');
-    return_string += info_window_html_div_if_exists(location_object, 'hours_of_operation');
-    return_string += info_window_html_div_if_exists(location_object, 'phone_number');
+    return_string += nl2br(info_window_html_div_if_exists(location_object, 'description'));
+    return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
+    return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
+    return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));
     return_string += info_window_html_div_if_exists(location_object, 'url');
     return_string += '</div>';
+    return return_string;
 }
 
 /**
@@ -118,6 +119,15 @@ function info_window_html_div_if_exists(location_object, location_object_propert
     }
 }
 
-$(document).ready(function () {
-    initialize();
+function nl2br (str, is_xhtml) {
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
+}
+
+function setup_location_extended_details(){
+
+}
+
+jQuery(document).ready(function () {
+    setup_google_map();
 });
