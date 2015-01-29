@@ -316,7 +316,7 @@ class ucf_health_locations {
 	 */
 	function selector_panel_list_item( $location_array ) {
 		$location = json_decode(json_encode($location_array));
-		return "<li class='locations $location->slug'><a href='#'>$location->name</a></li>";
+		return "<li class='locations $location->slug' data-location='$location->slug'><a href='#'>$location->name</a></li>";
 
 	}
 
@@ -330,7 +330,7 @@ class ucf_health_locations {
 		//print_r($location_array);
 		$location = json_decode(json_encode($location_array));
 		$return = "";
-		$return .= "<div class='$location->slug-info info'>";
+		$return .= "<div class='$location->slug-info info' data-location='$location->slug'>";
 		$return .= "	<ul class=''>";
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Address:</strong><br />";

@@ -63,27 +63,37 @@ function setup_google_map() {
             content: infoWindowHTML
         });
 
+        /**
+         * if user clicks on a map point, show the map dialog info box,
+         * and also highlight the extended details outside of the map.
+         */
         google.maps.event.addListener(markers[ key ], 'click', function () {
             if (currentInfoWindow) {
                 currentInfoWindow.close();
             }
+            show_details(key);
             currentInfoWindow = infoWindows[ key ];
             currentInfoWindow.open(map, markers[ key ]);
-            // @TODO add a class to the 'key' element so that css can highlight it or do other things
         });
 
 
     });
 
-    $('.map-point').each(function () {
+    /**
+     * if user clicks on a location outside the map, show the extended details
+     * and highlight the map point and show the map dialog info box.
+     */
+    $('div.locations ul li.locations').each(function () {
         google.maps.event.addDomListener(this, 'click', function () {
-            map.panTo(locations[ this.attributes[ "name" ].value ]);
+            var office_location = $(this).data('location');
+            show_details(office_location);
+            map.panTo(locations[ office_location] );
             map.setZoom(15);
             if (currentInfoWindow) {
                 currentInfoWindow.close();
             }
-            currentInfoWindow = infoWindows[ this.attributes[ "name" ].value ];
-            currentInfoWindow.open(map, markers[ this.attributes[ "name" ].value ]);
+            currentInfoWindow = infoWindows[ office_location ];
+            currentInfoWindow.open(map, markers[ office_location ]);
         });
     });
 }
@@ -124,10 +134,38 @@ function nl2br (str, is_xhtml) {
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
 }
 
-function setup_location_extended_details(){
+function show_details_click(clicked_div){
+    show_details($(clicked_div).data('location'));
 
 }
 
+function show_details(office_location){
+    hide_location_details(); // hide other location info
+    // highlight clicked item
+    $('div.locations ul li.locations[data-location="' + office_location + '"]').addClass('selected');
+
+    // show location extended details
+    $('div.locations div.info[data-location="' + office_location + '"]').removeClass('hidden').addClass('selected');
+
+}
+
+function hide_location_details() {
+    // hide the location info first.
+    $('div.locations ul li.locations').removeClass('selected')
+    $('div.locations div.info').removeClass('selected').addClass('hidden')
+}
+function setup_location_details(){
+    hide_location_details();
+    // auto-select the first item
+    $('div.locations ul li.locations').first().trigger('click');
+
+
+}
+
+
+
+
 jQuery(document).ready(function () {
     setup_google_map();
+    setup_location_details();
 });
