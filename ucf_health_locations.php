@@ -253,7 +253,7 @@ class ucf_health_locations {
 		);
 		$is_first_item  = true;
 
-		$locations      = [ ];
+		$locations      = array();
 
 		/*
 		 * Visible list of locations.
@@ -271,7 +271,7 @@ class ucf_health_locations {
 
 			// 1. Get the meta information about that term.
 
-			$this_location_info = [ ];
+			$this_location_info = array();
 
 			// 2. Create a key->value map of our meta data (and built-in data).
 			foreach ( $term_meta_data as $meta ) {
