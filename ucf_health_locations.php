@@ -31,6 +31,7 @@ class ucf_health_locations {
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_javascript_to_locations') );
 
 		add_filter( 'the_content', array( $this, 'insert_location_content' ) );
+
 	}
 
 
@@ -238,74 +239,78 @@ class ucf_health_locations {
 	 * by javascript to build the google map points.
 	 */
 	function insert_location_content( $content ) {
-		//echo $content;
-		// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
-		$terms = get_terms( self::taxonomy_locations );
+		// 'locations' is the slug of the page we want to alter.
+		// since this function is called once already inside The Loop, is_page doesn't work.
+		if (get_query_var('name') == 'locations') {
 
-		$term_meta_data = array(
-			'phone_number',
-			'fax_number',
-			'hours_of_operation',
-			'latitude',
-			'longitude',
-			'address',
-			'url'
-		);
-		$is_first_item  = true;
+			// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
+			$terms = get_terms( self::taxonomy_locations );
 
-		$locations      = array();
+			$term_meta_data = array(
+				'phone_number',
+				'fax_number',
+				'hours_of_operation',
+				'latitude',
+				'longitude',
+				'address',
+				'url'
+			);
+			$is_first_item  = true;
 
-		/*
-		 * Visible list of locations.
-		 */
-		$selector_panel = '';
-		$selector_panel_list = '';
-		$selector_panel_info = '';
-
-
-		foreach ( $terms as $location ) {
+			$locations = array();
 
 			/*
-			 * Invisible variable with location meta data in a JSON parsable object.
+			 * Visible list of locations.
 			 */
+			$selector_panel      = '';
+			$selector_panel_list = '';
+			$selector_panel_info = '';
 
-			// 1. Get the meta information about that term.
 
-			$this_location_info = array();
+			foreach ( $terms as $location ) {
 
-			// 2. Create a key->value map of our meta data (and built-in data).
-			foreach ( $term_meta_data as $meta ) {
-				$this_location_info[ $meta ] = get_tax_meta( $location->term_id, self::meta_taxonomy_prefix . $meta ); // set key->value
+				/*
+				 * Invisible variable with location meta data in a JSON parsable object.
+				 */
+
+				// 1. Get the meta information about that term.
+
+				$this_location_info = array();
+
+				// 2. Create a key->value map of our meta data (and built-in data).
+				foreach ( $term_meta_data as $meta ) {
+					$this_location_info[ $meta ] = get_tax_meta( $location->term_id, self::meta_taxonomy_prefix . $meta ); // set key->value
+				}
+				$this_location_info[ 'slug' ]        = $location->slug;
+				$this_location_info[ 'name' ]        = $location->name; // human readable title
+				$this_location_info[ 'description' ] = $location->description; // description
+
+				// 3. Add this map to the array of all locations, with the key being the location slug.
+				$locations[ $location->slug ] = $this_location_info;
+
+				// 4. Create an always-visible list entry (outside of the google map interface)
+				$selector_panel_list .= $this->selector_panel_list_item( $this_location_info );
+				$selector_panel_info .= $this->selector_panel_list_info( $this_location_info );
+
 			}
-			$this_location_info[ 'slug' ]        = $location->slug;
-			$this_location_info[ 'name' ]        = $location->name; // human readable title
-			$this_location_info[ 'description' ] = $location->description; // description
 
-			// 3. Add this map to the array of all locations, with the key being the location slug.
-			$locations[ $location->slug ] = $this_location_info;
+			$selector_panel .= '<h2 >Select a location to learn more:</h2 >';
+			$selector_panel .= '<div class="selector-panel locations" >';
+			$selector_panel .= '	<div class="left"><ul>';
+			$selector_panel .= $selector_panel_list;
+			$selector_panel .= '	</ul></div>';
+			$selector_panel .= '	<div class="right">';
+			$selector_panel .= $selector_panel_info;
+			$selector_panel .= '	</div>';
+			$selector_panel .= '</div>';
 
-			// 4. Create an always-visible list entry (outside of the google map interface)
-			$selector_panel_list .= $this->selector_panel_list_item( $this_location_info );
-			$selector_panel_info .= $this->selector_panel_list_info( $this_location_info );
+			// All location data is in the array. Output it.
+			$json_object = '<input type="hidden" name="' . self::html_input_name_locations . '" data-locations=' . "'" . json_encode( $locations ) . "'" . ' />';
 
+			$map = '<section><div id="map" style="height:460px; width:645px;"></div></section>';
+
+			return $content . $map . $json_object . $selector_panel;
 		}
-
-		$selector_panel .= '<h2 >Select a location to learn more:</h2 >';
-		$selector_panel .= '<div class="selector-panel locations" >';
-		$selector_panel .= '	<div class="left"><ul>';
-		$selector_panel .= $selector_panel_list;
-		$selector_panel .= '	</ul></div>';
-		$selector_panel .= '	<div class="right">';
-		$selector_panel .= $selector_panel_info;
-		$selector_panel .= '	</div>';
-		$selector_panel .= '</div>';
-
-		// All location data is in the array. Output it.
-		$json_object = '<input type="hidden" name="' . self::html_input_name_locations . '" data-locations=' . "'" . json_encode( $locations ) . "'" . ' />';
-
-		$map = '<section><div id="map" style="height:460px; width:645px;"></div></section>';
-		return $content . $map . $json_object . $selector_panel;
-
 	}
 
 	/**
