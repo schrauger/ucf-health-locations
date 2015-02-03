@@ -307,7 +307,7 @@ class ucf_health_locations {
 			// All location data is in the array. Output it.
 			$json_object = '<input type="hidden" name="' . self::html_input_name_locations . '" data-locations=' . "'" . json_encode( $locations ) . "'" . ' />';
 
-			$map = '<section><div id="map" style="height:460px; width:645px;"></div></section>';
+			$map = '<section><div id="map" ></div></section>';
 
 			$content = $content . $map . $json_object . $selector_panel;
 		}
