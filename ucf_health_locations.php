@@ -226,12 +226,12 @@ class ucf_health_locations {
 	 * Simply adds the location javascript if the page is locations
 	 */
 	function add_javascript_to_locations() {
-		//wp_reset_query();
-		//if ( is_page( 'locations' ) ) {
-			//echo 'ok';
+		// 'locations' is the slug of the page we want to alter.
+		// since this function is called once already inside The Loop, is_page doesn't work.
+		if (get_query_var('name') == 'locations') {
 			wp_register_script( 'locations_google_map', plugins_url('js/google-map.js', __FILE__ ), array('jquery') );
 			wp_enqueue_script( 'locations_google_map');
-		//} else { echo 'nada';}
+		}
 	}
 
 	/*
