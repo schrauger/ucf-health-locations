@@ -4,7 +4,7 @@ function setup_google_map() {
     var markers = {};
     var mapOptions = {
         center: new google.maps.LatLng(28.48197, -81.25351),
-        zoom: 11,
+        zoom: 15,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     var map = new google.maps.Map(document.getElementById("map"),
@@ -96,6 +96,18 @@ function setup_google_map() {
             currentInfoWindow.open(map, markers[ office_location ]);
         });
     });
+
+    // map: an instance of GMap3
+    // latlng: an array of instances of GLatLng
+    var latlngbounds = new google.maps.LatLngBounds();
+    for (var point in locations) {
+        latlngbounds.extend(locations[point]);
+    }
+
+    map.setCenter(latlngbounds.getCenter());
+    map.fitBounds(latlngbounds);
+
+
 }
 
 /**
@@ -107,10 +119,10 @@ function info_window_html(location_object) {
     return_string += '<div class="info_window">';
     return_string += info_window_html_div_if_exists(location_object, 'name');
     return_string += nl2br(info_window_html_div_if_exists(location_object, 'description'));
-    return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
-    return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
-    return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));
-    return_string += info_window_html_div_if_exists(location_object, 'url');
+//    return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
+//    return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
+//    return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));
+//    return_string += info_window_html_div_if_exists(location_object, 'url');
     return_string += '</div>';
     return return_string;
 }
