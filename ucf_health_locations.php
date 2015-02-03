@@ -309,8 +309,9 @@ class ucf_health_locations {
 
 			$map = '<section><div id="map" style="height:460px; width:645px;"></div></section>';
 
-			return $content . $map . $json_object . $selector_panel;
+			$content = $content . $map . $json_object . $selector_panel;
 		}
+		return $content;
 	}
 
 	/**
