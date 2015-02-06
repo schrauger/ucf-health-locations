@@ -244,7 +244,9 @@ class ucf_health_locations {
 		if (get_query_var('name') == 'locations') {
 
 			// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
-			$terms = get_terms( self::taxonomy_locations );
+			$terms = get_terms( self::taxonomy_locations , array(
+				'hide_empty'        => false // explicitly grab all locations to show on the map, even if no doctors are assigned there yet
+			));
 
 			$term_meta_data = array(
 				'phone_number',
