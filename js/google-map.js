@@ -1,5 +1,5 @@
 function setup_google_map() {
-    var zoomlevel = 12; // keep zoom at 12 on the map (higher number is closer zoom)
+    var zoomlevel = 10; // keep zoom at 12 on the map (higher number is closer zoom)
 
     var currentInfoWindow = new google.maps.InfoWindow();
     var infoWindows = {};
