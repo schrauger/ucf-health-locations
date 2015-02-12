@@ -1,4 +1,6 @@
 function setup_google_map() {
+    var zoomlevel = 12; // keep zoom at 12 on the map (higher number is closer zoom)
+
     var currentInfoWindow = new google.maps.InfoWindow();
     var infoWindows = {};
     var markers = {};
@@ -88,7 +90,7 @@ function setup_google_map() {
             var office_location = $(this).data('location');
             show_details(office_location);
             map.panTo(locations[ office_location] );
-            map.setZoom(15);
+            map.setZoom(zoomlevel);
             if (currentInfoWindow) {
                 currentInfoWindow.close();
             }
@@ -106,8 +108,12 @@ function setup_google_map() {
 
     map.setCenter(latlngbounds.getCenter());
     map.fitBounds(latlngbounds);
-
-
+    var listener = google.maps.event.addListener(map, "idle", function() {
+        //if (map.getZoom() > 16) {
+            map.setZoom(zoomlevel);
+        //}
+        google.maps.event.removeListener(listener);
+    });
 }
 
 /**
@@ -169,7 +175,7 @@ function hide_location_details() {
 function setup_location_details(){
     hide_location_details();
     // auto-select the first item
-    $('div.locations ul li.locations').first().trigger('click');
+    //$('div.locations ul li.locations').first().trigger('click');
 
 
 }
