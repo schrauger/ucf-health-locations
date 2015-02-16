@@ -176,6 +176,7 @@ function setup_location_details(){
     hide_location_details();
     // auto-select the first item
     //$('div.locations ul li.locations').first().trigger('click');
+    show_details_click($('div.locations ul li.locations').first()); // select first in list, but don't initially select the point on google map
 
 
 }
