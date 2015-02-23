@@ -28,7 +28,7 @@ class ucf_health_locations {
 
 		// Add the javascript to the locations page
 		//$this->add_javascript_to_locations();
-		add_action( 'wp_enqueue_scripts', array( $this, 'add_javascript_to_locations') );
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_javascript_to_locations' ) );
 
 		add_filter( 'the_content', array( $this, 'insert_location_content' ) );
 
@@ -228,11 +228,11 @@ class ucf_health_locations {
 	function add_javascript_to_locations() {
 		// 'locations' is the slug of the page we want to alter.
 		// since this function is called once already inside The Loop, is_page doesn't work.
-		if (get_query_var('name') == 'locations') {
-			wp_register_script( 'locations_google_map', plugins_url('js/google-map.js', __FILE__ ), array('jquery') );
-			wp_enqueue_script( 'locations_google_map');
-			wp_register_style( 'location_google_map_css', plugins_url('css/style.css', __FILE__));
-			wp_enqueue_style( 'location_google_map_css');
+		if ( get_query_var( 'name' ) == 'locations' ) {
+			wp_register_script( 'locations_google_map', plugins_url( 'js/google-map.js', __FILE__ ), array( 'jquery' ) );
+			wp_enqueue_script( 'locations_google_map' );
+			wp_register_style( 'location_google_map_css', plugins_url( 'css/style.css', __FILE__ ) );
+			wp_enqueue_style( 'location_google_map_css' );
 		}
 	}
 
@@ -243,12 +243,13 @@ class ucf_health_locations {
 	function insert_location_content( $content ) {
 		// 'locations' is the slug of the page we want to alter.
 		// since this function is called once already inside The Loop, is_page doesn't work.
-		if (get_query_var('name') == 'locations') {
+		if ( get_query_var( 'name' ) == 'locations' ) {
 
 			// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
-			$terms = get_terms( self::taxonomy_locations , array(
-				'hide_empty'        => false // explicitly grab all locations to show on the map, even if no doctors are assigned there yet
-			));
+			$terms = get_terms( self::taxonomy_locations, array(
+				'hide_empty' => false
+				// explicitly grab all locations to show on the map, even if no doctors are assigned there yet
+			) );
 
 			$term_meta_data = array(
 				'phone_number',
@@ -270,8 +271,8 @@ class ucf_health_locations {
 			$selector_panel_list = '';
 			$selector_panel_info = '';
 
-			for ($i=0; $length=sizeof($terms), $i<$length; $i++){
-				$location = $terms[$i];
+			for ( $i = 0; $length = sizeof( $terms ), $i < $length; $i ++ ) {
+				$location = $terms[ $i ];
 
 				/*
 				 * Invisible variable with location meta data in a JSON parsable object.
@@ -293,8 +294,8 @@ class ucf_health_locations {
 				$locations[ $location->slug ] = $this_location_info;
 
 				// 4. Create an always-visible list entry (outside of the google map interface)
-				$selector_panel_list .= $this->selector_panel_list_item( $this_location_info , $i+1);
-				$selector_panel_info .= $this->selector_panel_list_info( $this_location_info , $i+1);
+				$selector_panel_list .= $this->selector_panel_list_item( $this_location_info, $i + 1 );
+				$selector_panel_info .= $this->selector_panel_list_info( $this_location_info, $i + 1 );
 
 			}
 
@@ -315,49 +316,53 @@ class ucf_health_locations {
 
 			$content = $content . $map . $json_object . $selector_panel;
 		}
+
 		return $content;
 	}
 
 	/**
 	 * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
+	 *
 	 * @param $location_array
 	 * @param $i List item number in array
 	 *
 	 * @return string
 	 */
-	function selector_panel_list_item( $location_array , $i ) {
-		$location = json_decode(json_encode($location_array));
+	function selector_panel_list_item( $location_array, $i ) {
+		$location = json_decode( json_encode( $location_array ) );
+
 		return "<li class='locations $location->slug' data-location='$location->slug'><div class='location location-$i'></div><a href='#'>$location->name</a></li>";
 
 	}
 
 	/**
 	 * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
+	 *
 	 * @param $location_array
 	 * @param $i List item number in array
 	 *
 	 * @return string
 	 */
-	function selector_panel_list_info( $location_array , $i) {
+	function selector_panel_list_info( $location_array, $i ) {
 		//print_r($location_array);
-		$location = json_decode(json_encode($location_array));
-		$return = "";
+		$location = json_decode( json_encode( $location_array ) );
+		$return   = "";
 		$return .= "<div class='$location->slug-info info' data-location='$location->slug'>";
 		$return .= "	<ul class=''>";
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Address:</strong><br />";
-		$return .= "			<p>" . nl2br($location->address) . "</p>";
-		$return .= "			<a href='" . $this->get_directions($location) . "' class='green map location location-$i'>Directions</a>";
+		$return .= "			<p>" . nl2br( $location->address ) . "</p>";
+		$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location location-$i'>Directions</a>";
 		$return .= "		</div>";
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Phone:</strong><br />";
-		$return .= "			<p>" . nl2br($location->phone_number) . "</p>";
+		$return .= "			<p>" . nl2br( $location->phone_number ) . "</p>";
 		$return .= "			<strong>Fax:</strong><br />";
-		$return .= "			<p>" . nl2br($location->fax_number) . "</p>";
+		$return .= "			<p>" . nl2br( $location->fax_number ) . "</p>";
 		$return .= "		</div>";
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Hours:</strong></br>";
-		$return .= "			<p>" . nl2br($location->hours_of_operation) . "</p>";
+		$return .= "			<p>" . nl2br( $location->hours_of_operation ) . "</p>";
 		$return .= "			<p class='notice' >If you have a medical emergency, call 911.</p >";
 		$return .= "		</div>";
 		$return .= "    </ul>";
@@ -366,10 +371,16 @@ class ucf_health_locations {
 		return $return;
 	}
 
-	function get_directions($location){
-
-		return self::directions_base_url . urlencode(str_replace("\n", ', ', $location->address)) // change newlines into comma+space so google maps can process it properly
-		           . '/@' . $location->latitude. ',' . $location->longitude . ',17z/';
+	/**
+	 * Returns a url to google maps with the destination filled out.
+	 *
+	 * @param $location Object with address, latitude, and longitude members.
+	 *
+	 * @return string href to google maps
+	 */
+	function get_directions( $location ) {
+		return self::directions_base_url . urlencode( str_replace( "\n", ', ', $location->address ) ) // change newlines into comma+space so google maps can process it properly
+		       . '/@' . $location->latitude . ',' . $location->longitude . ',17z/';
 		//  https://www.google.com/maps/dir//6850+Lake+Nona+Blvd,+Orlando,+FL+32827/@28.3676791,-81.2850738,17z/
 	}
 
