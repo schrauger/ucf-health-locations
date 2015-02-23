@@ -15,7 +15,7 @@ class ucf_health_locations {
 	const taxonomy_specialities     = 'specialities';
 	const html_input_name_locations = 'ucf_health_locations';
 	const meta_taxonomy_prefix      = 'locations_';
-
+	const directions_base_url       = 'https://www.google.com/maps/dir//'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
 
 	function __construct() {
 		// Custom taxonomy (category specifically for doctors)
@@ -347,7 +347,7 @@ class ucf_health_locations {
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Address:</strong><br />";
 		$return .= "			<p>" . nl2br($location->address) . "</p>";
-		$return .= "			<a href='#' class='green map location location-$i'>Map This Location</a>";
+		$return .= "			<a href='" . $this->get_directions($location) . "' class='green map location location-$i'>Directions</a>";
 		$return .= "		</div>";
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Phone:</strong><br />";
@@ -364,6 +364,13 @@ class ucf_health_locations {
 		$return .= "</div>";
 
 		return $return;
+	}
+
+	function get_directions($location){
+
+		return self::directions_base_url . urlencode(str_replace("\n", ', ', $location->address)) // change newlines into comma+space so google maps can process it properly
+		           . '/@' . $location->latitude. ',' . $location->longitude . ',17z/';
+		//  https://www.google.com/maps/dir//6850+Lake+Nona+Blvd,+Orlando,+FL+32827/@28.3676791,-81.2850738,17z/
 	}
 
 }
