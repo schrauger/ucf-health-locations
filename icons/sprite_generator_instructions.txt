@@ -7,5 +7,5 @@ Set these options:
 Build direction: vertical
 Horizontal Offset: 2px
 Vertical Offset: 2px
-Css Prefix: a
+Css Prefix: .location
 Class Prefix: location-

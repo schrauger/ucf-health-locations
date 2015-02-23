@@ -327,7 +327,7 @@ class ucf_health_locations {
 	 */
 	function selector_panel_list_item( $location_array , $i ) {
 		$location = json_decode(json_encode($location_array));
-		return "<li class='locations $location->slug' data-location='$location->slug'><a href='#'>$i. $location->name</a></li>";
+		return "<li class='locations $location->slug' data-location='$location->slug'><div class='location location-$i'></div><a href='#'>$location->name</a></li>";
 
 	}
 
@@ -347,7 +347,7 @@ class ucf_health_locations {
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Address:</strong><br />";
 		$return .= "			<p>" . nl2br($location->address) . "</p>";
-		$return .= "			<a href='#' class='green map location-$i'>Map This Location</a>";
+		$return .= "			<a href='#' class='green map location location-$i'>Map This Location</a>";
 		$return .= "		</div>";
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Phone:</strong><br />";

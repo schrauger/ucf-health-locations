@@ -1,9 +1,16 @@
-a.location-1{ background-position: 0 0; width: 18px; height: 28px; }
-a.location-2{ background-position: 0 -30px; width: 18px; height: 28px; }
-a.location-3{ background-position: 0 -60px; width: 18px; height: 28px; }
-a.location-4{ background-position: 0 -90px; width: 18px; height: 28px; }
+.location.location-1{ background-position: 0 0; width: 18px; height: 28px; }
+.location.location-2{ background-position: 0 -30px; width: 18px; height: 28px; }
+.location.location-3{ background-position: 0 -60px; width: 18px; height: 28px; }
+.location.location-4{ background-position: 0 -90px; width: 18px; height: 28px; }
 
-.map {
+.location {
     background: url('/wp-content/plugins/ucf-health-locations/icons/map_icons.png') no-repeat top left;
     padding-bottom: 4px !important; /* override the previous map padding of 10, also marked as important */
+
+}
+div.location {
+    float: left;
+    margin-top: 10px;
+    margin-right: 5px;
+    padding-bottom: 0px !important;
 }
