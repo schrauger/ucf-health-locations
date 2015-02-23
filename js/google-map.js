@@ -48,17 +48,41 @@ function setup_google_map() {
     points[ 'com' ][ 'lat' ] = 28.367368;
     points[ 'com' ][ 'lon' ] = -81.280358;
     */
-
+    var map_icon_width = 18;
+    var map_icon_height = 28;
+    var map_sprite_padding = 2; // number of pixels between each sprite icon
+    var map_sprite_top = 0; // vertical location of the icon within the sprite (what changes in the loop)
+    var map_icon = {
+        url: '/wp-content/plugins/ucf-health-locations/icons/map_icons.png', // sprite file
+        size: new google.maps.Size(map_icon_width,map_icon_height), // lenghts and height
+        origin: '', // the top left of the sprite icon - set within the loop
+        anchor: new google.maps.Point(map_icon_width/2, map_icon_height) // the pointy part of the icon ((x/2,y) is the middle bottom)
+    }
+    var map_icon_count = 0; // our foreach loop has string keys, so we must manually count each iteration to calculate sprite location
     $.each(points, function (key, point) {
+        /*
+        Calculate sprite icon location
+         */
+        map_sprite_top = ((map_icon_height + map_sprite_padding) * map_icon_count);
+        map_icon.origin = new google.maps.Point(0,map_sprite_top);
+        console.log(map_sprite_top);
+
+        /*
+        Add a marker on the map for this location
+         */
         locations[ key ] = {};
         locations[ key ] = new google.maps.LatLng(point[ 'latitude' ], point[ 'longitude' ]);
         markers[ key ] = {};
         markers[ key ] = new google.maps.Marker({
             position: locations[ key ],
             map: map,
-            title: point[ 'name' ]
+            title: point[ 'name' ],
+            icon: map_icon
         });
 
+        /*
+        Add a description box when the marker is selected
+         */
         var infoWindowHTML = info_window_html(point);
         infoWindows[ key ] = {}
         infoWindows[ key ] = new google.maps.InfoWindow({
@@ -78,7 +102,7 @@ function setup_google_map() {
             currentInfoWindow.open(map, markers[ key ]);
         });
 
-
+        map_icon_count +=1;
     });
 
     /**

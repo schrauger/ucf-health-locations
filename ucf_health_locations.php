@@ -231,6 +231,8 @@ class ucf_health_locations {
 		if (get_query_var('name') == 'locations') {
 			wp_register_script( 'locations_google_map', plugins_url('js/google-map.js', __FILE__ ), array('jquery') );
 			wp_enqueue_script( 'locations_google_map');
+			wp_register_style( 'location_google_map_css', plugins_url('css/style.css', __FILE__));
+			wp_enqueue_style( 'location_google_map_css');
 		}
 	}
 
@@ -268,8 +270,8 @@ class ucf_health_locations {
 			$selector_panel_list = '';
 			$selector_panel_info = '';
 
-
-			foreach ( $terms as $location ) {
+			for ($i=0; $length=sizeof($terms), $i<$length; $i++){
+				$location = $terms[$i];
 
 				/*
 				 * Invisible variable with location meta data in a JSON parsable object.
@@ -291,8 +293,8 @@ class ucf_health_locations {
 				$locations[ $location->slug ] = $this_location_info;
 
 				// 4. Create an always-visible list entry (outside of the google map interface)
-				$selector_panel_list .= $this->selector_panel_list_item( $this_location_info );
-				$selector_panel_info .= $this->selector_panel_list_info( $this_location_info );
+				$selector_panel_list .= $this->selector_panel_list_item( $this_location_info , $i+1);
+				$selector_panel_info .= $this->selector_panel_list_info( $this_location_info , $i+1);
 
 			}
 
@@ -319,22 +321,24 @@ class ucf_health_locations {
 	/**
 	 * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
 	 * @param $location_array
+	 * @param $i List item number in array
 	 *
 	 * @return string
 	 */
-	function selector_panel_list_item( $location_array ) {
+	function selector_panel_list_item( $location_array , $i ) {
 		$location = json_decode(json_encode($location_array));
-		return "<li class='locations $location->slug' data-location='$location->slug'><a href='#'>$location->name</a></li>";
+		return "<li class='locations $location->slug' data-location='$location->slug'><a href='#'>$i. $location->name</a></li>";
 
 	}
 
 	/**
 	 * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
 	 * @param $location_array
+	 * @param $i List item number in array
 	 *
 	 * @return string
 	 */
-	function selector_panel_list_info( $location_array ) {
+	function selector_panel_list_info( $location_array , $i) {
 		//print_r($location_array);
 		$location = json_decode(json_encode($location_array));
 		$return = "";
@@ -343,7 +347,7 @@ class ucf_health_locations {
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Address:</strong><br />";
 		$return .= "			<p>" . nl2br($location->address) . "</p>";
-		$return .= "			<a href='#' class='green map'>Map This Location</a>";
+		$return .= "			<a href='#' class='green map location-$i'>Map This Location</a>";
 		$return .= "		</div>";
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Phone:</strong><br />";

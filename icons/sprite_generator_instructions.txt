@@ -1,0 +1,11 @@
+Zip all individual icons
+
+Submit zip file to:
+http://spritegen.website-performance.org/oldsites/spritegen/htdocs/
+
+Set these options:
+Build direction: vertical
+Horizontal Offset: 2px
+Vertical Offset: 2px
+Css Prefix: a
+Class Prefix: location-
