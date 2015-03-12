@@ -147,8 +147,9 @@ function setup_google_map() {
 function info_window_html(location_object) {
     var return_string = '';
     return_string += '<div class="info_window">';
-    return_string += info_window_html_div_if_exists(location_object, 'name');
+    return_string += '<div class="name"><a href="' + location_object['directions_url'] + '">' + location_object.name + '</a></div>';
     return_string += nl2br(info_window_html_div_if_exists(location_object, 'description'));
+    return_string += '<div class="directions_url"><a href="' + location_object.directions_url + '">Get Directions</a></div>';
 //    return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
 //    return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
 //    return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));
@@ -170,6 +171,8 @@ function info_window_html_div_if_exists(location_object, location_object_propert
         return '';
     }
 }
+
+
 
 function nl2br (str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
