@@ -16,6 +16,7 @@ class ucf_health_locations {
 	const html_input_name_locations = 'ucf_health_locations';
 	const meta_taxonomy_prefix      = 'locations_';
 	const directions_base_url       = 'https://www.google.com/maps/dir//'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
+	const directions_apple_base_url = 'http://maps.apple.com/?q'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
 
 	function __construct() {
 		// Custom taxonomy (category specifically for doctors)
@@ -216,6 +217,13 @@ class ucf_health_locations {
 				'desc' => "Link to the location's home page"
 			) );
 
+			/*
+ 			 * written_directions_pdf - link to a pdf with text driving instructions
+			 */
+			$my_meta->addText( $prefix . 'written_directions_pdf', array(
+				'name' => __( 'Written Directions PDF File ', 'tax-meta' ),
+				'desc' => "Optional - link to a PDF file with written driving instructions"
+			) );
 
 			//Finish Meta Box Declaration
 			$my_meta->Finish();
@@ -258,7 +266,8 @@ class ucf_health_locations {
 				'latitude',
 				'longitude',
 				'address',
-				'url'
+				'url',
+				'written_directions_pdf'
 			);
 			$is_first_item  = true;
 
@@ -353,7 +362,11 @@ class ucf_health_locations {
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Address:</strong><br />";
 		$return .= "			<p>" . nl2br( $location->address ) . "</p>";
-		$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location location-$i'>Directions</a>";
+		$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location location-$i'>Google Map</a>";
+		$return .= "			<a href='" . $this->get_directions_apple( $location ) . "' class='green map nomarker location '>Apple iOS Map</a>";
+		if ($location->written_directions_pdf) {
+			$return .= "			<a href='" . $location->written_directions_pdf . "' class='green map nomarker location '>Written Directions</a>";
+		}
 		$return .= "		</div>";
 		$return .= "		<div class='third'>";
 		$return .= "			<strong>Phone:</strong><br />";
@@ -383,6 +396,18 @@ class ucf_health_locations {
 		return self::directions_base_url . urlencode( str_replace( "\n", ', ', $location->address ) ) // change newlines into comma+space so google maps can process it properly
 		       . '/@' . $location->latitude . ',' . $location->longitude . ',17z/';
 		//  https://www.google.com/maps/dir//6850+Lake+Nona+Blvd,+Orlando,+FL+32827/@28.3676791,-81.2850738,17z/
+	}
+
+	function get_directions_apple( $location ) {
+		return self::directions_apple_base_url
+		       . '&ll=' .   $location->latitude . ',' . $location->longitude
+		       . '&sll='.   $location->latitude . ',' . $location->longitude
+			   . '&daddr='. $location->latitude . ',' . $location->longitude;
+		//  https://www.google.com/maps/dir//6850+Lake+Nona+Blvd,+Orlando,+FL+32827/@28.3676791,-81.2850738,17z/
+	}
+
+	function get_written_directions( $location ){
+
 	}
 
 }

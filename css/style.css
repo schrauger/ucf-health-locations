@@ -3,11 +3,19 @@
 .location.location-3{ background-position: 0 -60px; width: 18px; height: 28px; }
 .location.location-4{ background-position: 0 -90px; width: 18px; height: 28px; }
 
-.location {
+.location:first-of-type {
     background: url('/wp-content/plugins/ucf-health-locations/icons/map_icons.png') no-repeat top left;
-    padding-bottom: 4px !important; /* override the previous map padding of 10, also marked as important */
+
 
 }
+.location {
+    padding-bottom: 4px !important; /* override the previous map padding of 10, also marked as important */
+}
+
+.nomarker {
+    background: none;
+}
+
 div.location {
     float: left;
     margin-top: 10px;
