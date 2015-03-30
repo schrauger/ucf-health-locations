@@ -309,8 +309,8 @@ class ucf_health_locations {
 
 			}
 
-			$selector_panel .= '<h2 >Select a location to learn more:</h2 >';
-			$selector_panel .= '<div class="selector-panel locations" >';
+			$selector_panel .= '<h3 class="d">Select a location to learn more:</h3 ><h3 class="m">Select a map point above to learn more:</h3 >';
+			$selector_panel .= '<div id="info" class="selector-panel locations" >';
 			$selector_panel .= '	<div class="left"><ul>';
 			$selector_panel .= $selector_panel_list;
 			$selector_panel .= '	</ul></div>';
@@ -360,12 +360,14 @@ class ucf_health_locations {
 		$return .= "<div class='$location->slug-info info' data-location='$location->slug'>";
 		$return .= "	<ul class=''>";
 		$return .= "		<div class='third'>";
+		$return .= "			<h2>" . nl2br( $location->name ) . "</h2>";
 		$return .= "			<strong>Address:</strong><br />";
 		$return .= "			<p>" . nl2br( $location->address ) . "</p>";
-		$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location location-$i'>Google Map</a>";
-		$return .= "			<a href='" . $this->get_directions_apple( $location ) . "' class='green map nomarker location '>Apple iOS Map</a>";
+		$return .= " 			<p><strong>Directions:</strong></p>";
+		$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location' target='_blank'>Google Maps</a>";
+		$return .= "			<a href='" . $this->get_directions_apple( $location ) . "' class='green map nomarker location ' target='_blank'>Apple iOS Maps</a>";
 		if ($location->written_directions_pdf) {
-			$return .= "			<a href='" . $location->written_directions_pdf . "' class='green map nomarker location '>Written Directions</a>";
+			$return .= "			<a href='" . $location->written_directions_pdf . "' class='green map nomarker location ' target='_blank'>PDF Directions</a>";
 		}
 		$return .= "		</div>";
 		$return .= "		<div class='third'>";
