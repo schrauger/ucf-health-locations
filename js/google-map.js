@@ -150,7 +150,7 @@ function info_window_html(location_object) {
     return_string += '<div class="info_window">';
     return_string += '<div class="name"><strong><a style="font-size: 16px;" href="' + location_object['directions_url'] + '">' + location_object.name + '</a></strong></div>';
     return_string += '<p>' + nl2br(info_window_html_div_if_exists(location_object, 'description')) + '<a href="#info">More Info</a></p>';
-    return_string += '<strong>Directions:<div class="directions_url" target="_blank"><a href="' + location_object.directions_url + '">Google Maps</a> | <a href="' + location_object.written_directions_pdf + '" target="_blank">PDF File</a></div>';
+    return_string += '<strong>Directions:<div class="directions_url" target="_blank"><a href="' + location_object.directions_url + '">Google Maps</a> | <a href="' + location_object.directions_apple_url + '">Apple iOS Maps</a> | <a href="' + location_object.written_directions_pdf + '" target="_blank">PDF File</a></div>';
 //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
 //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
 //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));

@@ -299,6 +299,7 @@ class ucf_health_locations {
 				$this_location_info[ 'name' ]        = $location->name; // human readable title
 				$this_location_info[ 'description' ] = $location->description; // description
 				$this_location_info[ 'directions_url' ]  = $this->get_directions(json_decode( json_encode($this_location_info))); // convert array to object for get_directions
+				$this_location_info[ 'directions_apple_url' ]  = $this->get_directions_apple(json_decode( json_encode($this_location_info))); // convert array to object for get_directions
 
 				// 3. Add this map to the array of all locations, with the key being the location slug.
 				$locations[ $location->slug ] = $this_location_info;
