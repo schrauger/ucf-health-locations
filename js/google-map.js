@@ -54,9 +54,9 @@ function setup_google_map() {
     var map_sprite_top = 0; // vertical location of the icon within the sprite (what changes in the loop)
     var map_icon = {
         url: '/wp-content/plugins/ucf-health-locations/icons/map_icons.png', // sprite file
-        size: new google.maps.Size(map_icon_width,map_icon_height), // lenghts and height
+        size: new google.maps.Size(map_icon_width, map_icon_height), // lenghts and height
         origin: '', // the top left of the sprite icon - set within the loop
-        anchor: new google.maps.Point(map_icon_width/2, map_icon_height) // the pointy part of the icon ((x/2,y) is the middle bottom)
+        anchor: new google.maps.Point(map_icon_width / 2, map_icon_height) // the pointy part of the icon ((x/2,y) is the middle bottom)
     }
     var map_icon_count = 0; // our foreach loop has string keys, so we must manually count each iteration to calculate sprite location
     $.each(points, function (key, point) {
@@ -64,7 +64,7 @@ function setup_google_map() {
         Calculate sprite icon location
          */
         map_sprite_top = ((map_icon_height + map_sprite_padding) * map_icon_count);
-        map_icon.origin = new google.maps.Point(0,map_sprite_top);
+        map_icon.origin = new google.maps.Point(0, map_sprite_top);
         console.log(map_sprite_top);
 
         /*
@@ -102,7 +102,7 @@ function setup_google_map() {
             currentInfoWindow.open(map, markers[ key ]);
         });
 
-        map_icon_count +=1;
+        map_icon_count += 1;
     });
 
     /**
@@ -113,7 +113,7 @@ function setup_google_map() {
         google.maps.event.addDomListener(this, 'click', function () {
             var office_location = $(this).data('location');
             show_details(office_location);
-            map.panTo(locations[ office_location] );
+            map.panTo(locations[ office_location ]);
             map.setZoom(zoomlevel);
             if (currentInfoWindow) {
                 currentInfoWindow.close();
@@ -127,14 +127,14 @@ function setup_google_map() {
     // latlng: an array of instances of GLatLng
     var latlngbounds = new google.maps.LatLngBounds();
     for (var point in locations) {
-        latlngbounds.extend(locations[point]);
+        latlngbounds.extend(locations[ point ]);
     }
 
     map.setCenter(latlngbounds.getCenter());
     map.fitBounds(latlngbounds);
-    var listener = google.maps.event.addListener(map, "idle", function() {
+    var listener = google.maps.event.addListener(map, "idle", function () {
         //if (map.getZoom() > 16) {
-            map.setZoom(zoomlevel);
+        map.setZoom(zoomlevel);
         //}
         google.maps.event.removeListener(listener);
     });
@@ -148,13 +148,13 @@ function setup_google_map() {
 function info_window_html(location_object) {
     var return_string = '';
     return_string += '<div class="info_window">';
-    return_string += '<div class="name"><strong><a style="font-size: 16px;" href="' + location_object['directions_url'] + '">' + location_object.name + '</a></strong></div>';
+    return_string += '<div class="name"><strong><a style="font-size: 16px;" href="' + location_object[ 'directions_url' ] + '">' + location_object.name + '</a></strong></div>';
     return_string += '<p>' + nl2br(info_window_html_div_if_exists(location_object, 'description')) + '<a href="#info">More Info</a></p>';
     return_string += '<strong>Directions:<div class="directions_url" target="_blank"><a href="' + location_object.directions_url + '">Google Maps</a> | <a href="' + location_object.directions_apple_url + '">Apple iOS Maps</a> | <a href="' + location_object.written_directions_pdf + '" target="_blank">PDF File</a></div>';
-//  return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
-//  return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
-//  return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));
-//  return_string += info_window_html_div_if_exists(location_object, 'url');
+    //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
+    //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
+    //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));
+    //  return_string += info_window_html_div_if_exists(location_object, 'url');
     return_string += '</div>';
     return return_string;
 }
@@ -165,27 +165,26 @@ function info_window_html(location_object) {
  * @param location_object_property_key Ex address, description, name, etc
  * @returns {string}
  */
-function info_window_html_div_if_exists(location_object, location_object_property_key ){
-    if (location_object[location_object_property_key]) {
-        return '<div class="' + location_object_property_key + '">' + location_object[location_object_property_key] + '</div>'
+function info_window_html_div_if_exists(location_object, location_object_property_key) {
+    if (location_object[ location_object_property_key ]) {
+        return '<div class="' + location_object_property_key + '">' + location_object[ location_object_property_key ] + '</div>'
     } else {
         return '';
     }
 }
 
 
-
-function nl2br (str, is_xhtml) {
+function nl2br(str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
-    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
 
-function show_details_click(clicked_div){
+function show_details_click(clicked_div) {
     show_details($(clicked_div).data('location'));
 
 }
 
-function show_details(office_location){
+function show_details(office_location) {
     hide_location_details(); // hide other location info
     // highlight clicked item
     $('div.locations ul li.locations[data-location="' + office_location + '"]').addClass('selected');
@@ -200,7 +199,7 @@ function hide_location_details() {
     $('div.locations ul li.locations').removeClass('selected')
     $('div.locations div.info').removeClass('selected').addClass('hidden')
 }
-function setup_location_details(){
+function setup_location_details() {
     hide_location_details();
     // auto-select the first item
     //$('div.locations ul li.locations').first().trigger('click');
@@ -208,8 +207,6 @@ function setup_location_details(){
 
 
 }
-
-
 
 
 jQuery(document).ready(function () {

@@ -295,11 +295,11 @@ class ucf_health_locations {
 				foreach ( $term_meta_data as $meta ) {
 					$this_location_info[ $meta ] = get_tax_meta( $location->term_id, self::meta_taxonomy_prefix . $meta ); // set key->value
 				}
-				$this_location_info[ 'slug' ]        = $location->slug;
-				$this_location_info[ 'name' ]        = $location->name; // human readable title
-				$this_location_info[ 'description' ] = $location->description; // description
-				$this_location_info[ 'directions_url' ]  = $this->get_directions(json_decode( json_encode($this_location_info))); // convert array to object for get_directions
-				$this_location_info[ 'directions_apple_url' ]  = $this->get_directions_apple(json_decode( json_encode($this_location_info))); // convert array to object for get_directions
+				$this_location_info[ 'slug' ]                 = $location->slug;
+				$this_location_info[ 'name' ]                 = $location->name; // human readable title
+				$this_location_info[ 'description' ]          = $location->description; // description
+				$this_location_info[ 'directions_url' ]       = $this->get_directions( json_decode( json_encode( $this_location_info ) ) ); // convert array to object for get_directions
+				$this_location_info[ 'directions_apple_url' ] = $this->get_directions_apple( json_decode( json_encode( $this_location_info ) ) ); // convert array to object for get_directions
 
 				// 3. Add this map to the array of all locations, with the key being the location slug.
 				$locations[ $location->slug ] = $this_location_info;
@@ -367,7 +367,7 @@ class ucf_health_locations {
 		$return .= " 			<p><strong>Directions:</strong></p>";
 		$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location' target='_blank'>Google Maps</a>";
 		$return .= "			<a href='" . $this->get_directions_apple( $location ) . "' class='green map nomarker location ' target='_blank'>Apple iOS Maps</a>";
-		if ($location->written_directions_pdf) {
+		if ( $location->written_directions_pdf ) {
 			$return .= "			<a href='" . $location->written_directions_pdf . "' class='green map nomarker location ' target='_blank'>PDF Directions</a>";
 		}
 		$return .= "		</div>";
@@ -403,13 +403,13 @@ class ucf_health_locations {
 
 	function get_directions_apple( $location ) {
 		return self::directions_apple_base_url
-		       . '&ll=' .   $location->latitude . ',' . $location->longitude
-		       . '&sll='.   $location->latitude . ',' . $location->longitude
-			   . '&daddr='. $location->latitude . ',' . $location->longitude;
+		       . '&ll=' . $location->latitude . ',' . $location->longitude
+		       . '&sll=' . $location->latitude . ',' . $location->longitude
+		       . '&daddr=' . $location->latitude . ',' . $location->longitude;
 		//  https://www.google.com/maps/dir//6850+Lake+Nona+Blvd,+Orlando,+FL+32827/@28.3676791,-81.2850738,17z/
 	}
 
-	function get_written_directions( $location ){
+	function get_written_directions( $location ) {
 
 	}
 
