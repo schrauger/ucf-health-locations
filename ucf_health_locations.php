@@ -325,7 +325,7 @@ class ucf_health_locations {
 
 			$map = '<section><div id="map" ></div></section>';
 
-			$content = $content . $map . $json_object . $selector_panel;
+			$content = $content . "<div class='locations-output'>" . $map . $json_object . $selector_panel . "</div>";
 		}
 
 		return $content;
