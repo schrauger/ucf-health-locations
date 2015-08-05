@@ -236,7 +236,7 @@ class ucf_health_locations {
 	function add_javascript_to_locations() {
 		// 'locations' is the slug of the page we want to alter.
 		// since this function is called once already inside The Loop, is_page doesn't work.
-		if ( get_query_var( 'name' ) == 'locations' ) {
+		if ( get_query_var( 'name' ) == 'locations' || get_query_var( 'name' ) == 'meet-your-experts' ) {
 			wp_register_script( 'locations_google_map', plugins_url( 'js/google-map.js', __FILE__ ), array( 'jquery' ) );
 			wp_enqueue_script( 'locations_google_map' );
 			wp_register_style( 'location_google_map_css', plugins_url( 'css/style.css', __FILE__ ) );
@@ -251,7 +251,7 @@ class ucf_health_locations {
 	function insert_location_content( $content ) {
 		// 'locations' is the slug of the page we want to alter.
 		// since this function is called once already inside The Loop, is_page doesn't work.
-		if ( get_query_var( 'name' ) == 'locations' ) {
+		if ( get_query_var( 'name' ) == 'locations' || get_query_var( 'name' ) == 'meet-your-experts' ) {
 
 			// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
 			$terms = get_terms( self::taxonomy_locations, array(
