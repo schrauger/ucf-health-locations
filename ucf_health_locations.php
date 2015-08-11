@@ -17,6 +17,13 @@ class ucf_health_locations {
 	const meta_taxonomy_prefix      = 'locations_';
 	const directions_base_url       = 'https://www.google.com/maps/dir//'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
 	const directions_apple_base_url = 'http://maps.apple.com/?q'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
+	const shortcode                 = 'locationsmap'; // what people type into their page
+	const script_register           = 'locations_google_map_js'; // arbitrary unique identifier
+	const style_register            = 'locations_google_map_css';
+	const google_maps_register      = 'google-maps';
+	const google_maps_key           = '//maps.googleapis.com/maps/api/js?key=AIzaSyB-Hs-bKrEM2KWp1gRYzbPM_qhw2yAysxY&sensor=true'; // js with our key
+
+	static $add_js_css; // if shortcode is found, this is set, which causes js/css to load
 
 	function __construct() {
 		// Custom taxonomy (category specifically for doctors)
@@ -28,11 +35,29 @@ class ucf_health_locations {
 		$this->locations_meta_fields();
 
 		// Add the javascript to the locations page
-		//$this->add_javascript_to_locations();
-		add_action( 'wp_enqueue_scripts', array( $this, 'add_javascript_to_locations' ) );
+		add_action( 'init', array( $this, 'register_location_js_css' ) );
+		add_action( 'wp_footer', array($this, 'print_location_js_css'));
 
-		add_filter( 'the_content', array( $this, 'insert_location_content' ) );
+		add_shortcode(ucf_health_locations::shortcode, array($this, 'handle_shortcode'));
 
+	}
+
+
+	/**
+	 * Outputs the location html in place of the shortcode.
+	 * Also sets a flag to include js and css.
+	 * @param $attributes
+	 *
+	 * @return string
+	 */
+	function handle_shortcode($attributes) {
+		if (!self::$add_js_css) {
+			// only add the location once on the page.
+
+			self::$add_js_css = true;
+			return $this->get_location_content();
+		}
+		return '';
 	}
 
 
@@ -237,11 +262,111 @@ class ucf_health_locations {
 		// 'locations' is the slug of the page we want to alter.
 		// since this function is called once already inside The Loop, is_page doesn't work.
 		if ( get_query_var( 'name' ) == 'locations' || get_query_var( 'name' ) == 'meet-your-experts' ) {
-			wp_register_script( 'locations_google_map', plugins_url( 'js/google-map.js', __FILE__ ), array( 'jquery' ) );
-			wp_enqueue_script( 'locations_google_map' );
-			wp_register_style( 'location_google_map_css', plugins_url( 'css/style.css', __FILE__ ) );
-			wp_enqueue_style( 'location_google_map_css' );
+			$this->register_location_js_css();
 		}
+	}
+
+	/**
+	 *
+	 * adds the js and css to the current page
+	 */
+	function register_location_js_css(){
+		wp_register_script( self::google_maps_register, self::google_maps_key);
+		wp_register_script( self::script_register, plugins_url( 'js/google-map.js', __FILE__ ), array( 'jquery' ) );
+		//wp_enqueue_script( 'locations_google_map' );
+		wp_register_style( self::style_register, plugins_url( 'css/style.css', __FILE__ ) );
+		//wp_enqueue_style( 'location_google_map_css' );
+	}
+
+	function print_location_js_css(){
+		if ( ! self::$add_js_css) {
+			return;
+		}
+		wp_print_scripts(self::google_maps_register);
+		wp_print_scripts(self::script_register);
+		wp_print_styles(self::style_register);
+	}
+
+
+	/**
+	 * Adds the map and location html to the current page
+	 * @return string HTML with location map object (which is empty until javascript generates the map on the fly),
+	 *                as well as the selector list with detailed location information
+	 */
+	function get_location_content(){
+		// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
+		$terms = get_terms( self::taxonomy_locations, array(
+			'hide_empty' => false
+			// explicitly grab all locations to show on the map, even if no doctors are assigned there yet
+		) );
+
+		$term_meta_data = array(
+			'phone_number',
+			'fax_number',
+			'hours_of_operation',
+			'latitude',
+			'longitude',
+			'address',
+			'url',
+			'written_directions_pdf'
+		);
+		$is_first_item  = true;
+
+		$locations = array();
+
+		/*
+		 * Visible list of locations.
+		 */
+		$selector_panel      = '';
+		$selector_panel_list = '';
+		$selector_panel_info = '';
+
+		for ( $i = 0; $length = sizeof( $terms ), $i < $length; $i ++ ) {
+			$location = $terms[ $i ];
+
+			/*
+			 * Invisible variable with location meta data in a JSON parsable object.
+			 */
+
+			// 1. Get the meta information about that term.
+
+			$this_location_info = array();
+
+			// 2. Create a key->value map of our meta data (and built-in data).
+			foreach ( $term_meta_data as $meta ) {
+				$this_location_info[ $meta ] = get_tax_meta( $location->term_id, self::meta_taxonomy_prefix . $meta ); // set key->value
+			}
+			$this_location_info[ 'slug' ]                 = $location->slug;
+			$this_location_info[ 'name' ]                 = $location->name; // human readable title
+			$this_location_info[ 'description' ]          = $location->description; // description
+			$this_location_info[ 'directions_url' ]       = $this->get_directions( json_decode( json_encode( $this_location_info ) ) ); // convert array to object for get_directions
+			$this_location_info[ 'directions_apple_url' ] = $this->get_directions_apple( json_decode( json_encode( $this_location_info ) ) ); // convert array to object for get_directions
+
+			// 3. Add this map to the array of all locations, with the key being the location slug.
+			$locations[ $location->slug ] = $this_location_info;
+
+			// 4. Create an always-visible list entry (outside of the google map interface)
+			$selector_panel_list .= $this->selector_panel_list_item( $this_location_info, $i + 1 );
+			$selector_panel_info .= $this->selector_panel_list_info( $this_location_info, $i + 1 );
+
+		}
+
+		$selector_panel .= '<h3 class="d">Select a location to learn more:</h3 ><h3 class="m">Select a map point above to learn more:</h3 >';
+		$selector_panel .= '<div id="info" class="selector-panel locations" >';
+		$selector_panel .= '	<div class="left"><ul>';
+		$selector_panel .= $selector_panel_list;
+		$selector_panel .= '	</ul></div>';
+		$selector_panel .= '	<div class="right">';
+		$selector_panel .= $selector_panel_info;
+		$selector_panel .= '	</div>';
+		$selector_panel .= '</div>';
+
+		// All location data is in the array. Output it.
+		$json_object = '<input type="hidden" name="' . self::html_input_name_locations . '" data-locations=' . "'" . json_encode( $locations ) . "'" . ' />';
+
+		$map = '<section><div id="map" ></div></section>';
+
+		return "<div class='locations-output'>" . $map . $json_object . $selector_panel . "</div>";
 	}
 
 	/*
@@ -253,79 +378,7 @@ class ucf_health_locations {
 		// since this function is called once already inside The Loop, is_page doesn't work.
 		if ( get_query_var( 'name' ) == 'locations' || get_query_var( 'name' ) == 'meet-your-experts' ) {
 
-			// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
-			$terms = get_terms( self::taxonomy_locations, array(
-				'hide_empty' => false
-				// explicitly grab all locations to show on the map, even if no doctors are assigned there yet
-			) );
-
-			$term_meta_data = array(
-				'phone_number',
-				'fax_number',
-				'hours_of_operation',
-				'latitude',
-				'longitude',
-				'address',
-				'url',
-				'written_directions_pdf'
-			);
-			$is_first_item  = true;
-
-			$locations = array();
-
-			/*
-			 * Visible list of locations.
-			 */
-			$selector_panel      = '';
-			$selector_panel_list = '';
-			$selector_panel_info = '';
-
-			for ( $i = 0; $length = sizeof( $terms ), $i < $length; $i ++ ) {
-				$location = $terms[ $i ];
-
-				/*
-				 * Invisible variable with location meta data in a JSON parsable object.
-				 */
-
-				// 1. Get the meta information about that term.
-
-				$this_location_info = array();
-
-				// 2. Create a key->value map of our meta data (and built-in data).
-				foreach ( $term_meta_data as $meta ) {
-					$this_location_info[ $meta ] = get_tax_meta( $location->term_id, self::meta_taxonomy_prefix . $meta ); // set key->value
-				}
-				$this_location_info[ 'slug' ]                 = $location->slug;
-				$this_location_info[ 'name' ]                 = $location->name; // human readable title
-				$this_location_info[ 'description' ]          = $location->description; // description
-				$this_location_info[ 'directions_url' ]       = $this->get_directions( json_decode( json_encode( $this_location_info ) ) ); // convert array to object for get_directions
-				$this_location_info[ 'directions_apple_url' ] = $this->get_directions_apple( json_decode( json_encode( $this_location_info ) ) ); // convert array to object for get_directions
-
-				// 3. Add this map to the array of all locations, with the key being the location slug.
-				$locations[ $location->slug ] = $this_location_info;
-
-				// 4. Create an always-visible list entry (outside of the google map interface)
-				$selector_panel_list .= $this->selector_panel_list_item( $this_location_info, $i + 1 );
-				$selector_panel_info .= $this->selector_panel_list_info( $this_location_info, $i + 1 );
-
-			}
-
-			$selector_panel .= '<h3 class="d">Select a location to learn more:</h3 ><h3 class="m">Select a map point above to learn more:</h3 >';
-			$selector_panel .= '<div id="info" class="selector-panel locations" >';
-			$selector_panel .= '	<div class="left"><ul>';
-			$selector_panel .= $selector_panel_list;
-			$selector_panel .= '	</ul></div>';
-			$selector_panel .= '	<div class="right">';
-			$selector_panel .= $selector_panel_info;
-			$selector_panel .= '	</div>';
-			$selector_panel .= '</div>';
-
-			// All location data is in the array. Output it.
-			$json_object = '<input type="hidden" name="' . self::html_input_name_locations . '" data-locations=' . "'" . json_encode( $locations ) . "'" . ' />';
-
-			$map = '<section><div id="map" ></div></section>';
-
-			$content = $content . "<div class='locations-output'>" . $map . $json_object . $selector_panel . "</div>";
+			$content = $content . $this->get_location_content();
 		}
 
 		return $content;
