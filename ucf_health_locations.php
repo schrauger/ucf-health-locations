@@ -11,13 +11,15 @@
  * elements on the locations page.
  */
 class ucf_health_locations {
+	
+	const shortcode                 = 'locationsmap'; // what people type into their page
+
 	const taxonomy_locations        = 'locations';
 	const taxonomy_specialities     = 'specialities';
 	const html_input_name_locations = 'ucf_health_locations';
 	const meta_taxonomy_prefix      = 'locations_';
 	const directions_base_url       = 'https://www.google.com/maps/dir//'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
 	const directions_apple_base_url = 'http://maps.apple.com/?q'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
-	const shortcode                 = 'locationsmap'; // what people type into their page
 	const script_register           = 'locations_google_map_js'; // arbitrary unique identifier
 	const style_register            = 'locations_google_map_css';
 	const google_maps_register      = 'google-maps';
