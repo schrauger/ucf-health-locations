@@ -11,7 +11,7 @@
  * elements on the locations page.
  */
 class ucf_health_locations {
-	
+
 	const shortcode                 = 'locationsmap'; // what people type into their page
 
 	const taxonomy_locations        = 'locations';
@@ -24,8 +24,6 @@ class ucf_health_locations {
 	const style_register            = 'locations_google_map_css';
 	const google_maps_register      = 'google-maps';
 	const google_maps_key           = '//maps.googleapis.com/maps/api/js?key=AIzaSyB-Hs-bKrEM2KWp1gRYzbPM_qhw2yAysxY&sensor=true'; // js with our key
-
-	static $add_js_css; // if shortcode is found, this is set, which causes js/css to load
 
 	function __construct() {
 		// Custom taxonomy (category specifically for doctors)
@@ -44,6 +42,15 @@ class ucf_health_locations {
 
 	}
 
+	/**
+	 *
+	 * adds the js and css to the current page
+	 */
+	function register_location_js_css(){
+		wp_register_script( self::google_maps_register, self::google_maps_key);
+		wp_register_script( self::script_register, plugins_url( 'js/google-map.js', __FILE__ ), array( 'jquery' ) );
+		wp_register_style( self::style_register, plugins_url( 'css/style.css', __FILE__ ) );
+	}
 
 	/**
 	 * Outputs the location html in place of the shortcode.
@@ -53,13 +60,11 @@ class ucf_health_locations {
 	 * @return string
 	 */
 	function handle_shortcode($attributes) {
-		if (!self::$add_js_css) {
-			// only add the location once on the page.
+		wp_enqueue_script(self::google_maps_register);
+		wp_enqueue_script(self::script_register);
+		wp_enqueue_style(self::style_register);
+		return $this->get_location_content();
 
-			self::$add_js_css = true;
-			return $this->get_location_content();
-		}
-		return '';
 	}
 
 
@@ -257,39 +262,6 @@ class ucf_health_locations {
 		}
 	}
 
-	/*
-	 * Simply adds the location javascript if the page is locations
-	 */
-	function add_javascript_to_locations() {
-		// 'locations' is the slug of the page we want to alter.
-		// since this function is called once already inside The Loop, is_page doesn't work.
-		if ( get_query_var( 'name' ) == 'locations' || get_query_var( 'name' ) == 'meet-your-experts' ) {
-			$this->register_location_js_css();
-		}
-	}
-
-	/**
-	 *
-	 * adds the js and css to the current page
-	 */
-	function register_location_js_css(){
-		wp_register_script( self::google_maps_register, self::google_maps_key);
-		wp_register_script( self::script_register, plugins_url( 'js/google-map.js', __FILE__ ), array( 'jquery' ) );
-		//wp_enqueue_script( 'locations_google_map' );
-		wp_register_style( self::style_register, plugins_url( 'css/style.css', __FILE__ ) );
-		//wp_enqueue_style( 'location_google_map_css' );
-	}
-
-	function print_location_js_css(){
-		if ( ! self::$add_js_css) {
-			return;
-		}
-		wp_print_scripts(self::google_maps_register);
-		wp_print_scripts(self::script_register);
-		wp_print_styles(self::style_register);
-	}
-
-
 	/**
 	 * Adds the map and location html to the current page
 	 * @return string HTML with location map object (which is empty until javascript generates the map on the fly),
@@ -369,21 +341,6 @@ class ucf_health_locations {
 		$map = '<section><div id="map" ></div></section>';
 
 		return "<div class='locations-output'>" . $map . $json_object . $selector_panel . "</div>";
-	}
-
-	/*
-	 * Inserts the location details for each location on the 'location' page. This is used
-	 * by javascript to build the google map points.
-	 */
-	function insert_location_content( $content ) {
-		// 'locations' is the slug of the page we want to alter.
-		// since this function is called once already inside The Loop, is_page doesn't work.
-		if ( get_query_var( 'name' ) == 'locations' || get_query_var( 'name' ) == 'meet-your-experts' ) {
-
-			$content = $content . $this->get_location_content();
-		}
-
-		return $content;
 	}
 
 	/**
