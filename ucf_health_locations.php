@@ -59,11 +59,17 @@ class ucf_health_locations {
 	 *
 	 * @return string
 	 */
-	function handle_shortcode($attributes) {
+	function handle_shortcode($raw_attributes) {
+
+		// get any user-specified attributes and merge with defaults
+		$attributes = shortcode_atts( array (
+			                              'map' => 'true',
+			                              'panel' => 'true'
+		                              ), $raw_attributes);
 		wp_enqueue_script(self::google_maps_register);
 		wp_enqueue_script(self::script_register);
 		wp_enqueue_style(self::style_register);
-		return $this->get_location_content();
+		return $this->get_location_content($attributes);
 
 	}
 
@@ -267,7 +273,7 @@ class ucf_health_locations {
 	 * @return string HTML with location map object (which is empty until javascript generates the map on the fly),
 	 *                as well as the selector list with detailed location information
 	 */
-	function get_location_content(){
+	function get_location_content($attributes){
 		// Get all terms for this specific taxonomy and loop through to display them all in radio buttons.
 		$terms = get_terms( self::taxonomy_locations, array(
 			'hide_empty' => false
@@ -324,21 +330,28 @@ class ucf_health_locations {
 			$selector_panel_info .= $this->selector_panel_list_info( $this_location_info, $i + 1 );
 
 		}
-
-		$selector_panel .= '<h3 class="d">Select a location to learn more:</h3 ><h3 class="m">Select a map point above to learn more:</h3 >';
-		$selector_panel .= '<div id="info" class="selector-panel locations" >';
-		$selector_panel .= '	<div class="left"><ul>';
-		$selector_panel .= $selector_panel_list;
-		$selector_panel .= '	</ul></div>';
-		$selector_panel .= '	<div class="right">';
-		$selector_panel .= $selector_panel_info;
-		$selector_panel .= '	</div>';
-		$selector_panel .= '</div>';
+		if (strtolower($attributes['panel']) === 'true') {
+			$selector_panel .= '<h3 class="d">Select a location to learn more:</h3 ><h3 class="m">Select a map point above to learn more:</h3 >';
+			$selector_panel .= '<div id="info" class="selector-panel locations" >';
+			$selector_panel .= '	<div class="left"><ul>';
+			$selector_panel .= $selector_panel_list;
+			$selector_panel .= '	</ul></div>';
+			$selector_panel .= '	<div class="right">';
+			$selector_panel .= $selector_panel_info;
+			$selector_panel .= '	</div>';
+			$selector_panel .= '</div>';
+		} else {
+			$selector_panel = '';
+		}
 
 		// All location data is in the array. Output it.
 		$json_object = '<input type="hidden" name="' . self::html_input_name_locations . '" data-locations=' . "'" . json_encode( $locations ) . "'" . ' />';
 
-		$map = '<section><div id="map" ></div></section>';
+		if (strtolower($attributes['map']) === 'true') {
+			$map = '<section><div id="map" ></div></section>';
+		} else {
+			$map = '';
+		}
 
 		return "<div class='locations-output'>" . $map . $json_object . $selector_panel . "</div>";
 	}

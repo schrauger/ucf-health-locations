@@ -210,6 +210,6 @@ function setup_location_details() {
 
 
 jQuery(document).ready(function () {
-    setup_google_map();
     setup_location_details();
+    setup_google_map();
 });
