@@ -387,7 +387,7 @@ class ucf_health_locations {
 		$return .= "	<ul class=''>";
 		$return .= "		<div class='third'>";
 		$return .= "			<h2>" . nl2br( $location->name ) . "</h2>";
-		$return .= "			<strong>Address:</srong><br />";
+		$return .= "			<strong>Address:</strong><br />";
 		$return .= "			<p>" . nl2br( $location->address ) . "</p>";
 		$return .= " 			<p><strong>Directions:</strong></p>";
 		$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location' target='_blank'>Google Maps</a>";
