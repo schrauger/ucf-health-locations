@@ -390,8 +390,6 @@ class ucf_health_locations {
 		if ($location->address){
 			$return .= "			<strong>Address:</strong><br />";
 			$return .= "			<p>" . nl2br( $location->address ) . "</p>";
-		}
-		if ($location){
 			$return .= " 			<p><strong>Directions:</strong></p>";
 			$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location' target='_blank'>Google Maps</a>";
 			$return .= "			<a href='" . $this->get_directions_apple( $location ) . "' class='green map nomarker location ' target='_blank'>Apple iOS Maps</a>";
