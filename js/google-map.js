@@ -60,49 +60,52 @@ function setup_google_map() {
     }
     var map_icon_count = 0; // our foreach loop has string keys, so we must manually count each iteration to calculate sprite location
     $.each(points, function (key, point) {
-        /*
-        Calculate sprite icon location
-         */
-        map_sprite_top = ((map_icon_height + map_sprite_padding) * map_icon_count);
-        map_icon.origin = new google.maps.Point(0, map_sprite_top);
-        console.log(map_sprite_top);
+		// we have some hidden locations with no lat-long. don't show those on the map.
+		if (point['latitude'] && point['longitude']){
+		    /*
+		    Calculate sprite icon location
+		     */
+		    map_sprite_top = ((map_icon_height + map_sprite_padding) * map_icon_count);
+		    map_icon.origin = new google.maps.Point(0, map_sprite_top);
+		    console.log(map_sprite_top);
 
-        /*
-        Add a marker on the map for this location
-         */
-        locations[ key ] = {};
-        locations[ key ] = new google.maps.LatLng(point[ 'latitude' ], point[ 'longitude' ]);
-        markers[ key ] = {};
-        markers[ key ] = new google.maps.Marker({
-            position: locations[ key ],
-            map: map,
-            title: point[ 'name' ],
-            icon: map_icon
-        });
+		    /*
+		    Add a marker on the map for this location
+		     */
+		    locations[ key ] = {};
+		    locations[ key ] = new google.maps.LatLng(point[ 'latitude' ], point[ 'longitude' ]);
+		    markers[ key ] = {};
+		    markers[ key ] = new google.maps.Marker({
+		        position: locations[ key ],
+		        map: map,
+		        title: point[ 'name' ],
+		        icon: map_icon
+		    });
 
-        /*
-        Add a description box when the marker is selected
-         */
-        var infoWindowHTML = info_window_html(point);
-        infoWindows[ key ] = {}
-        infoWindows[ key ] = new google.maps.InfoWindow({
-            content: infoWindowHTML
-        });
+		    /*
+		    Add a description box when the marker is selected
+		     */
+		    var infoWindowHTML = info_window_html(point);
+		    infoWindows[ key ] = {}
+		    infoWindows[ key ] = new google.maps.InfoWindow({
+		        content: infoWindowHTML
+		    });
 
-        /**
-         * if user clicks on a map point, show the map dialog info box,
-         * and also highlight the extended details outside of the map.
-         */
-        google.maps.event.addListener(markers[ key ], 'click', function () {
-            if (currentInfoWindow) {
-                currentInfoWindow.close();
-            }
-            show_details(key);
-            currentInfoWindow = infoWindows[ key ];
-            currentInfoWindow.open(map, markers[ key ]);
-        });
+		    /**
+		     * if user clicks on a map point, show the map dialog info box,
+		     * and also highlight the extended details outside of the map.
+		     */
+		    google.maps.event.addListener(markers[ key ], 'click', function () {
+		        if (currentInfoWindow) {
+		            currentInfoWindow.close();
+		        }
+		        show_details(key);
+		        currentInfoWindow = infoWindows[ key ];
+		        currentInfoWindow.open(map, markers[ key ]);
+		    });
 
-        map_icon_count += 1;
+		    map_icon_count += 1;
+		}
     });
 
     /**

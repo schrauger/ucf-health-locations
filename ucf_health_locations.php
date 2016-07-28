@@ -387,24 +387,34 @@ class ucf_health_locations {
 		$return .= "	<ul class=''>";
 		$return .= "		<div class='third'>";
 		$return .= "			<h2>" . nl2br( $location->name ) . "</h2>";
-		$return .= "			<strong>Address:</strong><br />";
-		$return .= "			<p>" . nl2br( $location->address ) . "</p>";
-		$return .= " 			<p><strong>Directions:</strong></p>";
-		$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location' target='_blank'>Google Maps</a>";
-		$return .= "			<a href='" . $this->get_directions_apple( $location ) . "' class='green map nomarker location ' target='_blank'>Apple iOS Maps</a>";
-		if ( $location->written_directions_pdf ) {
-			$return .= "			<a href='" . $location->written_directions_pdf . "' class='green map nomarker location ' target='_blank'>PDF Directions</a>";
+		if ($location->address){
+			$return .= "			<strong>Address:</strong><br />";
+			$return .= "			<p>" . nl2br( $location->address ) . "</p>";
+		}
+		if ($location){
+			$return .= " 			<p><strong>Directions:</strong></p>";
+			$return .= "			<a href='" . $this->get_directions( $location ) . "' class='green map location' target='_blank'>Google Maps</a>";
+			$return .= "			<a href='" . $this->get_directions_apple( $location ) . "' class='green map nomarker location ' target='_blank'>Apple iOS Maps</a>";
+			if ( $location->written_directions_pdf ) {
+				$return .= "			<a href='" . $location->written_directions_pdf . "' class='green map nomarker location ' target='_blank'>PDF Directions</a>";
+			}
 		}
 		$return .= "		</div>";
 		$return .= "		<div class='third'>";
-		$return .= "			<strong>Phone:</strong><br />";
-		$return .= "			<p>" . nl2br( stripslashes($location->phone_number )) . "</p>";
-		$return .= "			<strong>Fax:</strong><br />";
-		$return .= "			<p>" . nl2br( $location->fax_number ) . "</p>";
+		if ($location->phone_number){
+			$return .= "			<strong>Phone:</strong><br />";
+			$return .= "			<p>" . nl2br( stripslashes($location->phone_number )) . "</p>";
+		}
+		if ($location->fax_number){
+			$return .= "			<strong>Fax:</strong><br />";
+			$return .= "			<p>" . nl2br( $location->fax_number ) . "</p>";
+		}
 		$return .= "		</div>";
 		$return .= "		<div class='third'>";
-		$return .= "			<strong>Hours:</strong></br>";
-		$return .= "			<p>" . nl2br( $location->hours_of_operation ) . "</p>";
+		if ($location->hours_of_operation){
+			$return .= "			<strong>Hours:</strong></br>";
+			$return .= "			<p>" . nl2br( $location->hours_of_operation ) . "</p>";
+		}
 		$return .= "			<p class='notice' >If you have a medical emergency, call 911.</p >";
 		$return .= "		</div>";
 		$return .= "    </ul>";
