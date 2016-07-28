@@ -115,13 +115,14 @@ function setup_google_map() {
      */
     $('div.locations ul li.locations').each(function () {
         google.maps.event.addDomListener(this, 'click', function () {
-            var office_location = $(this).data('location');
+			if (currentInfoWindow) {
+                currentInfoWindow.close();
+            }            
+			var office_location = $(this).data('location');
             show_details(office_location);
             map.panTo(locations[ office_location ]);
             map.setZoom(zoomlevel);
-            if (currentInfoWindow) {
-                currentInfoWindow.close();
-            }
+            
             currentInfoWindow = infoWindows[ office_location ];
             currentInfoWindow.open(map, markers[ office_location ]);
         });
