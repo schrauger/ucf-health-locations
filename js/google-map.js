@@ -104,8 +104,9 @@ function setup_google_map() {
 		        currentInfoWindow.open(map, markers[ key ]);
 		    });
 
-		    map_icon_count += 1;
+
 		}
+	    map_icon_count += 1;
     });
 
     /**
