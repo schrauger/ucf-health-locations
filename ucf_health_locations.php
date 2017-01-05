@@ -94,8 +94,8 @@ class ucf_health_locations {
 			null, // don't set custom taxonomies for custom post types; link them later with register_taxonomy_for_object_type()
 			array(
 				'labels'       => array(
-					'name'          => __( 'Specialities' ),
-					'singular_name' => __( 'Speciality' )
+					'name'          => __( 'Specialties' ),
+					'singular_name' => __( 'Specialty' )
 				),
 				'hierarchical' => true
 				// gives us the 'most used' tab and the ability to structure (might not need it, though)
