@@ -113,7 +113,7 @@ function setup_google_map() {
      * if user clicks on a location outside the map, show the extended details
      * and highlight the map point and show the map dialog info box.
      */
-    $('div.locations ul li.locations').each(function () {
+    $('div.locations div.right div.info').each(function () {
         google.maps.event.addDomListener(this, 'click', function () {
 			if (currentInfoWindow) {
                 currentInfoWindow.close();
