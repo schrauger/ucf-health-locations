@@ -6,6 +6,8 @@
  * Date: 1/21/15
  * Time: 4:36 PM
  *
+ * @version 1.2
+ *
  * This plugin was created in order to decouple the theme from the site-specific functions. However, the
  * theme won't run quite properly if this plugin is disabled, since there are still some tightly coupled
  * elements on the locations page.
@@ -298,7 +300,7 @@ class ucf_health_locations {
 		 * Visible list of locations.
 		 */
 		$selector_panel      = '';
-		$selector_panel_list = '';
+		//$selector_panel_list = '';
 		$selector_panel_info = '';
 
 		for ( $i = 0; $length = sizeof( $terms ), $i < $length; $i ++ ) {
@@ -326,16 +328,16 @@ class ucf_health_locations {
 			$locations[ $location->slug ] = $this_location_info;
 
 			// 4. Create an always-visible list entry (outside of the google map interface)
-			$selector_panel_list .= $this->selector_panel_list_item( $this_location_info, $i + 1 );
+			//$selector_panel_list .= $this->selector_panel_list_item( $this_location_info, $i + 1 );
 			$selector_panel_info .= $this->selector_panel_list_info( $this_location_info, $i + 1 );
 
 		}
 		if (strtolower($attributes['panel']) === 'true') {
-			$selector_panel .= '<h3 class="d">Select a location to learn more:</h3 ><h3 class="m">Select a map point above to learn more:</h3 >';
+			//$selector_panel .= '<h3 class="d">Select a location to learn more:</h3 ><h3 class="m">Select a map point above to learn more:</h3 >';
 			$selector_panel .= '<div id="info" class="selector-panel locations" >';
-			$selector_panel .= '	<div class="left"><ul>';
+			/*$selector_panel .= '	<div class="left"><ul>';
 			$selector_panel .= $selector_panel_list;
-			$selector_panel .= '	</ul></div>';
+			$selector_panel .= '	</ul></div>';*/
 			$selector_panel .= '	<div class="right">';
 			$selector_panel .= $selector_panel_info;
 			$selector_panel .= '	</div>';
@@ -358,7 +360,7 @@ class ucf_health_locations {
 
 	/**
 	 * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
-	 *
+	 * @deprecated Since 1.2. No longer use left tab navigation; instead, we show all results on the page.
 	 * @param $location_array
 	 * @param $i List item number in array
 	 *
