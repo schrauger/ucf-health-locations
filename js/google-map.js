@@ -1,12 +1,12 @@
 function setup_google_map() {
-    var zoomlevel = 10; // keep zoom at 12 on the map (higher number is closer zoom)
+    var zoomlevel = 11; // keep zoom at 12 on the map (higher number is closer zoom)
 
     var currentInfoWindow = new google.maps.InfoWindow();
     var infoWindows = {};
     var markers = {};
     var mapOptions = {
         center: new google.maps.LatLng(28.48197, -81.25351),
-        zoom: 15,
+        zoom: zoomlevel,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     var map = new google.maps.Map(document.getElementById("map"),
