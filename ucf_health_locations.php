@@ -38,7 +38,6 @@ class ucf_health_locations {
 
 		// Add the javascript to the locations page
 		add_action( 'init', array( $this, 'register_location_js_css' ) );
-		add_action( 'wp_footer', array($this, 'print_location_js_css'));
 
 		add_shortcode(ucf_health_locations::shortcode, array($this, 'handle_shortcode'));
 
