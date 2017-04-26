@@ -49,8 +49,21 @@ class ucf_health_locations {
 	 */
 	function register_location_js_css(){
 		wp_register_script( self::google_maps_register, self::google_maps_key);
-		wp_register_script( self::script_register, plugins_url( 'js/google-map.js', __FILE__ ), array( 'jquery' ) );
-		wp_register_style( self::style_register, plugins_url( 'css/style.css', __FILE__ ) );
+
+		wp_register_script(
+			self::script_register,
+			plugins_url( 'js/google-map.js', __FILE__ ),
+			array( 'jquery' ),
+			filemtime( plugin_dir_path(__FILE__) . '/js/google-map.js'),
+			true
+		);
+		wp_register_style(
+			self::style_register,
+			plugins_url( 'css/style.css', __FILE__ ),
+			array(),
+			filemtime( plugin_dir_path(__FILE__) . '/css/style.css'),
+			true
+		);
 	}
 
 	/**

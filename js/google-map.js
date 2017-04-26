@@ -1,4 +1,4 @@
-function setup_google_map() {
+function setup_google_map($) {
     var zoomlevel = 11; // keep zoom at 12 on the map (higher number is closer zoom)
 
     var currentInfoWindow = new google.maps.InfoWindow();
@@ -37,7 +37,7 @@ function setup_google_map() {
     ]);
 
     //Create points object
-    var points = jQuery('input[name="ucf_health_locations"]').data('locations'); // this input has a JSON object with all the info - see ucf_health_locations->insert_location_content()
+    var points = $('input[name="ucf_health_locations"]').data('locations'); // this input has a JSON object with all the info - see ucf_health_locations->insert_location_content()
     var locations = {}; // will contain just the latitude_X_longitude objects
 
     //Create College of Medicine object
@@ -57,7 +57,7 @@ function setup_google_map() {
         size: new google.maps.Size(map_icon_width, map_icon_height), // lenghts and height
         origin: '', // the top left of the sprite icon - set within the loop
         anchor: new google.maps.Point(map_icon_width / 2, map_icon_height) // the pointy part of the icon ((x/2,y) is the middle bottom)
-    }
+    };
     var map_icon_count = 0; // our foreach loop has string keys, so we must manually count each iteration to calculate sprite location
     $.each(points, function (key, point) {
 		// we have some hidden locations with no lat-long. don't show those on the map.
@@ -68,6 +68,7 @@ function setup_google_map() {
 		    map_sprite_top = ((map_icon_height + map_sprite_padding) * map_icon_count);
 		    map_icon.origin = new google.maps.Point(0, map_sprite_top);
 		    console.log(map_sprite_top);
+            console.log('yayyyyy!');
 
 		    /*
 		    Add a marker on the map for this location
@@ -86,7 +87,7 @@ function setup_google_map() {
 		    Add a description box when the marker is selected
 		     */
 		    var infoWindowHTML = info_window_html(point);
-		    infoWindows[ key ] = {}
+		    infoWindows[ key ] = {};
 		    infoWindows[ key ] = new google.maps.InfoWindow({
 		        content: infoWindowHTML
 		    });
@@ -99,7 +100,7 @@ function setup_google_map() {
 		        if (currentInfoWindow) {
 		            currentInfoWindow.close();
 		        }
-		        show_details(key);
+		        //show_details(key);
 		        currentInfoWindow = infoWindows[ key ];
 		        currentInfoWindow.open(map, markers[ key ]);
 		    });
@@ -119,7 +120,7 @@ function setup_google_map() {
                 currentInfoWindow.close();
             }            
 			var office_location = $(this).data('location');
-            show_details(office_location);
+            //show_details(office_location);
             map.panTo(locations[ office_location ]);
             map.setZoom(zoomlevel);
             
@@ -184,37 +185,6 @@ function nl2br(str, is_xhtml) {
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
 
-function show_details_click(clicked_div) {
-    show_details($(clicked_div).data('location'));
-
-}
-
-function show_details(office_location) {
-    hide_location_details(); // hide other location info
-    // highlight clicked item
-    $('div.locations ul li.locations[data-location="' + office_location + '"]').addClass('selected');
-
-    // show location extended details
-    $('div.locations div.info[data-location="' + office_location + '"]').removeClass('hidden').addClass('selected');
-
-}
-
-function hide_location_details() {
-    // hide the location info first.
-    $('div.locations ul li.locations').removeClass('selected')
-    $('div.locations div.info').removeClass('selected').addClass('hidden')
-}
-function setup_location_details() {
-    hide_location_details();
-    // auto-select the first item
-    //$('div.locations ul li.locations').first().trigger('click');
-    show_details_click($('div.locations ul li.locations').first()); // select first in list, but don't initially select the point on google map
-
-
-}
-
-
-jQuery(document).ready(function () {
-    setup_location_details();
-    setup_google_map();
-});
+(function ($) {
+    setup_google_map($);
+})(jQuery);
