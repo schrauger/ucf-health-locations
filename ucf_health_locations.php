@@ -397,7 +397,7 @@ class ucf_health_locations {
 		//print_r($location_array);
 		$location = json_decode( json_encode( $location_array ) );
 		$return   = "";
-		$return .= "<div class='$location->slug-info info' data-location='$location->slug'>";
+		$return .= "<div id='$location->slug' class='$location->slug-info info' data-location='$location->slug'>";
 		$return .= "	<ul class=''>";
 		$return .= "		<div class='third'>";
 		$return .= "			<h2>" . nl2br( $location->name ) . "</h2>";
