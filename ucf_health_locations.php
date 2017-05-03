@@ -18,6 +18,7 @@ class ucf_health_locations {
 
 	const taxonomy_locations        = 'locations';
 	const taxonomy_specialities     = 'specialities';
+	const taxonomy_languages        = 'languages';
 	const html_input_name_locations = 'ucf_health_locations';
 	const meta_taxonomy_prefix      = 'locations_';
 	const directions_base_url       = 'https://www.google.com/maps/dir//'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
@@ -31,6 +32,7 @@ class ucf_health_locations {
 		// Custom taxonomy (category specifically for doctors)
 		add_action( 'init', array( $this, 'create_locations_taxonomy' ), 20 );
 		add_action( 'init', array( $this, 'create_specialities_taxonomy' ), 20 );
+		add_action( 'init', array( $this, 'create_languages_taxonomy' ), 20 );
 		add_action( 'init', array( $this, 'link_custom_taxonomies_with_custom_post_types' ), 20 );
 
 		// Custom fields for a custom taxonomy.
@@ -117,6 +119,21 @@ class ucf_health_locations {
 		);
 	}
 
+	function create_languages_taxonomy() {
+		register_taxonomy(
+			self::taxonomy_languages, // name/slug of taxonomy
+			null, // don't set custom taxonomies for custom post types; link them later with register_taxonomy_for_object_type()
+			array(
+				'labels'       => array(
+					'name'          => __( 'Languages' ),
+					'singular_name' => __( 'Language' )
+				),
+				'hierarchical' => true
+				// gives us the 'most used' tab and the ability to structure (might not need it, though)
+			)
+		);
+	}
+
 	/**
 	 * Adds our two taxonomies to the custom post type 'doctors'.
 	 * If 'doctors' does not exist, it doesn't try to add them.
@@ -129,6 +146,7 @@ class ucf_health_locations {
 			// http://codex.wordpress.org/Function_Reference/register_taxonomy#Usage
 			register_taxonomy_for_object_type( self::taxonomy_locations, 'doctors' );
 			register_taxonomy_for_object_type( self::taxonomy_specialities, 'doctors' );
+			register_taxonomy_for_object_type( self::taxonomy_languages, 'doctors' );
 		}
 	}
 
@@ -340,18 +358,13 @@ class ucf_health_locations {
 			$locations[ $location->slug ] = $this_location_info;
 
 			// 4. Create an always-visible list entry (outside of the google map interface)
-			//$selector_panel_list .= $this->selector_panel_list_item( $this_location_info, $i + 1 );
 			$selector_panel_info .= $this->selector_panel_list_info( $this_location_info, $i + 1 );
 
 		}
 		if (strtolower($attributes['panel']) === 'true') {
-			//$selector_panel .= '<h3 class="d">Select a location to learn more:</h3 ><h3 class="m">Select a map point above to learn more:</h3 >';
 			$selector_panel .= '<div id="info" class="selector-panel locations" >';
-			/*$selector_panel .= '	<div class="left"><ul>';
-			$selector_panel .= $selector_panel_list;
-			$selector_panel .= '	</ul></div>';*/
 			$selector_panel .= '	<div class="right">';
-			$selector_panel .= $selector_panel_info;
+			$selector_panel .=          $selector_panel_info;
 			$selector_panel .= '	</div>';
 			$selector_panel .= '</div>';
 		} else {
