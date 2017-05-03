@@ -6,7 +6,7 @@
  * Date: 1/21/15
  * Time: 4:36 PM
  *
- * @version 1.2
+ * @version 2.1
  *
  * This plugin was created in order to decouple the theme from the site-specific functions. However, the
  * theme won't run quite properly if this plugin is disabled, since there are still some tightly coupled
