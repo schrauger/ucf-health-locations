@@ -22,11 +22,14 @@ class ucf_health_locations {
 	const html_input_name_locations = 'ucf_health_locations';
 	const meta_taxonomy_prefix      = 'locations_';
 	const directions_base_url       = 'https://www.google.com/maps/dir//'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
-	const directions_apple_base_url = 'http://maps.apple.com/?q'; // the double slash at the end is important, in order to have directions TO this place instead of FROM it
+	const directions_apple_base_url = 'http://maps.apple.com/?q';
 	const script_register           = 'locations_google_map_js'; // arbitrary unique identifier
 	const style_register            = 'locations_google_map_css';
 	const google_maps_register      = 'google-maps';
-	const google_maps_key           = '//maps.googleapis.com/maps/api/js?key=AIzaSyB-Hs-bKrEM2KWp1gRYzbPM_qhw2yAysxY&sensor=true'; // js with our key
+	const google_maps_key           = '//maps.googleapis.com/maps/api/js?key=AIzaSyB-Hs-bKrEM2KWp1gRYzbPM_qhw2yAysxY&sensor=true'; // js with our key.
+	// we use the medweb@ucf.edu (ie med.organic.songs@gmail.com) account for our api.
+	// this api key is restricted to our domains, so we shouldn't have a problem with someone reading the api key and trying to use it on their own project.
+	// https://console.cloud.google.com/google/maps-apis/apis/maps-backend.googleapis.com/credentials?authuser=1&folder=&organizationId=&project=api-project-116744227221
 
 	function __construct() {
 		// Custom taxonomy (category specifically for doctors)
