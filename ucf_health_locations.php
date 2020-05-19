@@ -123,9 +123,12 @@ class ucf_health_locations {
 					'singular_name' => __( 'Specialty' )
 				),
 				'hierarchical' => true,
-				// gives us the 'most used' tab and the ability to structure (might not need it, though)
 				'query_var' => false, // don't create subpages based on the taxonomy slugs
 				'rewrite' => false, // same as above
+				'public' => false,
+				'show_ui' => true,
+				'show_admin_column' => true,
+				'show_in_nav_menus' => true,
 			)
 		);
 	}
@@ -140,9 +143,12 @@ class ucf_health_locations {
 					'singular_name' => __( 'Language' )
 				),
 				'hierarchical' => true,
-				// gives us the 'most used' tab and the ability to structure (might not need it, though)
 				'query_var' => false, // don't create subpages based on the taxonomy slugs
 				'rewrite' => false, // same as above
+				'public' => false,
+				'show_ui' => true,
+				'show_admin_column' => true,
+				'show_in_nav_menus' => true,
 			)
 		);
 	}
