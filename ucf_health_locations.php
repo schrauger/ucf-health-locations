@@ -105,6 +105,10 @@ class ucf_health_locations {
 				'hierarchical' => true,
 				'query_var' => false, // don't create subpages based on the taxonomy slugs
 				'rewrite' => false, // same as above
+				'public' => false,
+				'show_ui' => true,
+				'show_admin_column' => true,
+				'show_in_nav_menus' => true,
 			)
 		);
 	}
