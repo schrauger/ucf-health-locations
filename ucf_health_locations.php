@@ -432,7 +432,11 @@ class ucf_health_locations {
 		$return .= "<div id='$location->slug' class='$location->slug-info info' data-location='$location->slug'>";
 		$return .= "	<ul class=''>";
 		$return .= "		<div class='third'>";
-		$return .= "			<h2>" . nl2br( $location->name ) . "</h2>";
+		if ( $location->slug != 'ocso' ) {
+			$return .= "			<h2><a href='" . get_bloginfo('url') ."/locations/". nl2br( $location->slug ) . "'>" . nl2br( $location->name ) . "</a></h2>";
+		} else {
+			$return .= "			<h2>" . nl2br( $location->name ) . "</h2>";
+		}
 		if ($location->address){
 			$return .= "			<strong>Address:</strong><br />";
 			$return .= "			<p>" . nl2br( $location->address ) . "</p>";
