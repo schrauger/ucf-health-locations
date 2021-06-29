@@ -9,141 +9,146 @@ function setup_google_map($) {
         zoom: zoomlevel,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
-    var map = new google.maps.Map(document.getElementById("map"),
-        mapOptions);
-    map.set('styles', [
-        {
-            "featureType": "administrative",
-            "stylers": [ {"visibility": "off"} ]
-        }, {
-            "featureType": "landscape",
-            "stylers": [ {"visibility": "off"} ]
-        }, {
-            "featureType": "poi",
-            "stylers": [ {"visibility": "off"} ]
-        }, {
-            "featureType": "poi.medical",
-            "stylers": [ {"visibility": "on"} ]
-        }, {
-            "featureType": "poi.school",
-            "stylers": [ {"visibility": "on"} ]
-        }, {
-            "featureType": "transit",
-            "stylers": [ {"visibility": "off"} ]
-        }, {
-            "featureType": "water",
-            "stylers": [ {"visibility": "on"} ]
-        }, {}
-    ]);
+    var maps_blocks = document.getElementsByClassName("ucf-health-locationsmap");
+    for (var i = 0; i < maps_blocks.length; i++){
+        var map_block = maps_blocks[i];
+        var map = new google.maps.Map(map_block,
+            mapOptions);
+        map.set('styles', [
+            {
+                "featureType": "administrative",
+                "stylers": [ {"visibility": "off"} ]
+            }, {
+                "featureType": "landscape",
+                "stylers": [ {"visibility": "off"} ]
+            }, {
+                "featureType": "poi",
+                "stylers": [ {"visibility": "off"} ]
+            }, {
+                "featureType": "poi.medical",
+                "stylers": [ {"visibility": "on"} ]
+            }, {
+                "featureType": "poi.school",
+                "stylers": [ {"visibility": "on"} ]
+            }, {
+                "featureType": "transit",
+                "stylers": [ {"visibility": "off"} ]
+            }, {
+                "featureType": "water",
+                "stylers": [ {"visibility": "on"} ]
+            }, {}
+        ]);
 
-    //Create points object
-    var points = $('input[name="ucf_health_locations"]').data('locations'); // this input has a JSON object with all the info - see ucf_health_locations->insert_location_content()
-    var locations = {}; // will contain just the latitude_X_longitude objects
+        //Create points object
+        var points = $('input[name="ucf_health_locations"]').data('locations'); // this input has a JSON object with all the info - see ucf_health_locations->insert_location_content()
+        var locations = {}; // will contain just the latitude_X_longitude objects
 
-    //Create College of Medicine object
-    /*
-    points[ 'com' ] = {};
-    points[ 'com' ][ 'title' ] = "UCF College of Medicine";
-    points[ 'com' ][ 'content' ] = "UCF College of Medicine <br /> <br /> 6850 Lake Nona Boulevard <br /> Orlando, FL 32827 <br /> (407) 266-1000";
-    points[ 'com' ][ 'lat' ] = 28.367368;
-    points[ 'com' ][ 'lon' ] = -81.280358;
-    */
-    var map_icon_width = 18;
-    var map_icon_height = 28;
-    var map_sprite_padding = 2; // number of pixels between each sprite icon
-    var map_sprite_top = 0; // vertical location of the icon within the sprite (what changes in the loop)
-    var map_icon = {
-        url: '/wp-content/plugins/ucf-health-locations/icons/map_icons.png', // sprite file
-        size: new google.maps.Size(map_icon_width, map_icon_height), // lenghts and height
-        origin: '', // the top left of the sprite icon - set within the loop
-        anchor: new google.maps.Point(map_icon_width / 2, map_icon_height) // the pointy part of the icon ((x/2,y) is the middle bottom)
-    };
-    var map_icon_count = 0; // our foreach loop has string keys, so we must manually count each iteration to calculate sprite location
-    $.each(points, function (key, point) {
-		// we have some hidden locations with no lat-long. don't show those on the map.
-		if (point['latitude'] && point['longitude']){
-		    /*
-		    Calculate sprite icon location
-		     */
-		    map_sprite_top = ((map_icon_height + map_sprite_padding) * map_icon_count);
-		    map_icon.origin = new google.maps.Point(0, map_sprite_top);
-		    console.log(map_sprite_top);
-            console.log('yayyyyy!');
+        //Create College of Medicine object
+        /*
+        points[ 'com' ] = {};
+        points[ 'com' ][ 'title' ] = "UCF College of Medicine";
+        points[ 'com' ][ 'content' ] = "UCF College of Medicine <br /> <br /> 6850 Lake Nona Boulevard <br /> Orlando, FL 32827 <br /> (407) 266-1000";
+        points[ 'com' ][ 'lat' ] = 28.367368;
+        points[ 'com' ][ 'lon' ] = -81.280358;
+        */
+        var map_icon_width = 18;
+        var map_icon_height = 28;
+        var map_sprite_padding = 2; // number of pixels between each sprite icon
+        var map_sprite_top = 0; // vertical location of the icon within the sprite (what changes in the loop)
+        var map_icon = {
+            url: '/wp-content/plugins/ucf-health-locations/icons/map_icons.png', // sprite file
+            size: new google.maps.Size(map_icon_width, map_icon_height), // lenghts and height
+            origin: '', // the top left of the sprite icon - set within the loop
+            anchor: new google.maps.Point(map_icon_width / 2, map_icon_height) // the pointy part of the icon ((x/2,y) is the middle bottom)
+        };
+        var map_icon_count = 0; // our foreach loop has string keys, so we must manually count each iteration to calculate sprite location
+        $.each(points, function (key, point) {
+            // we have some hidden locations with no lat-long. don't show those on the map.
+            if (point['latitude'] && point['longitude']){
+                /*
+                Calculate sprite icon location
+                 */
+                map_sprite_top = ((map_icon_height + map_sprite_padding) * map_icon_count);
+                map_icon.origin = new google.maps.Point(0, map_sprite_top);
+                console.log(map_sprite_top);
+                console.log('yayyyyy!');
 
-		    /*
-		    Add a marker on the map for this location
-		     */
-		    locations[ key ] = {};
-		    locations[ key ] = new google.maps.LatLng(point[ 'latitude' ], point[ 'longitude' ]);
-		    markers[ key ] = {};
-		    markers[ key ] = new google.maps.Marker({
-		        position: locations[ key ],
-		        map: map,
-		        title: point[ 'name' ],
-		        icon: map_icon
-		    });
+                /*
+                Add a marker on the map for this location
+                 */
+                locations[ key ] = {};
+                locations[ key ] = new google.maps.LatLng(point[ 'latitude' ], point[ 'longitude' ]);
+                markers[ key ] = {};
+                markers[ key ] = new google.maps.Marker({
+                    position: locations[ key ],
+                    map: map,
+                    title: point[ 'name' ],
+                    icon: map_icon
+                });
 
-		    /*
-		    Add a description box when the marker is selected
-		     */
-		    var infoWindowHTML = info_window_html(point);
-		    infoWindows[ key ] = {};
-		    infoWindows[ key ] = new google.maps.InfoWindow({
-		        content: infoWindowHTML
-		    });
+                /*
+                Add a description box when the marker is selected
+                 */
+                var infoWindowHTML = info_window_html(point);
+                infoWindows[ key ] = {};
+                infoWindows[ key ] = new google.maps.InfoWindow({
+                    content: infoWindowHTML
+                });
 
-		    /**
-		     * if user clicks on a map point, show the map dialog info box,
-		     * and also highlight the extended details outside of the map.
-		     */
-		    google.maps.event.addListener(markers[ key ], 'click', function () {
-		        if (currentInfoWindow) {
-		            currentInfoWindow.close();
-		        }
-		        //show_details(key);
-		        currentInfoWindow = infoWindows[ key ];
-		        currentInfoWindow.open(map, markers[ key ]);
-		    });
+                /**
+                 * if user clicks on a map point, show the map dialog info box,
+                 * and also highlight the extended details outside of the map.
+                 */
+                google.maps.event.addListener(markers[ key ], 'click', function () {
+                    if (currentInfoWindow) {
+                        currentInfoWindow.close();
+                    }
+                    //show_details(key);
+                    currentInfoWindow = infoWindows[ key ];
+                    currentInfoWindow.open(map, markers[ key ]);
+                });
 
 
-		}
-	    map_icon_count += 1;
-    });
-
-    /**
-     * if user clicks on a location outside the map, show the extended details
-     * and highlight the map point and show the map dialog info box.
-     */
-    $('div.locations div.right div.info').each(function () {
-        google.maps.event.addDomListener(this, 'click', function () {
-			if (currentInfoWindow) {
-                currentInfoWindow.close();
-            }            
-			var office_location = $(this).data('location');
-            //show_details(office_location);
-            map.panTo(locations[ office_location ]);
-            map.setZoom(zoomlevel);
-            
-            currentInfoWindow = infoWindows[ office_location ];
-            currentInfoWindow.open(map, markers[ office_location ]);
+            }
+            map_icon_count += 1;
         });
-    });
 
-    // map: an instance of GMap3
-    // latlng: an array of instances of GLatLng
-    var latlngbounds = new google.maps.LatLngBounds();
-    for (var point in locations) {
-        latlngbounds.extend(locations[ point ]);
-    }
+        /**
+         * if user clicks on a location outside the map, show the extended details
+         * and highlight the map point and show the map dialog info box.
+         */
+        $('div.locations div.right div.info').each(function () {
+            google.maps.event.addDomListener(this, 'click', function () {
+                if (currentInfoWindow) {
+                    currentInfoWindow.close();
+                }
+                var office_location = $(this).data('location');
+                //show_details(office_location);
+                map.panTo(locations[ office_location ]);
+                map.setZoom(zoomlevel);
 
-    map.setCenter(latlngbounds.getCenter());
-    map.fitBounds(latlngbounds);
-    var listener = google.maps.event.addListener(map, "idle", function () {
-        //if (map.getZoom() > 16) {
-        map.setZoom(zoomlevel);
-        //}
-        google.maps.event.removeListener(listener);
-    });
+                currentInfoWindow = infoWindows[ office_location ];
+                currentInfoWindow.open(map, markers[ office_location ]);
+            });
+        });
+
+        // map: an instance of GMap3
+        // latlng: an array of instances of GLatLng
+        var latlngbounds = new google.maps.LatLngBounds();
+        for (var point in locations) {
+            latlngbounds.extend(locations[ point ]);
+        }
+
+        map.setCenter(latlngbounds.getCenter());
+        map.fitBounds(latlngbounds);
+        var listener = google.maps.event.addListener(map, "idle", function () {
+            //if (map.getZoom() > 16) {
+            map.setZoom(zoomlevel);
+            //}
+            google.maps.event.removeListener(listener);
+        });
+    };
+
 }
 
 /**

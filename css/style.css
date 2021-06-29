@@ -5,8 +5,6 @@
 
 .location {
     background: url('/wp-content/plugins/ucf-health-locations/icons/map_icons.png') no-repeat top left;
-
-
 }
 .location {
     padding-bottom: 4px !important; /* override the previous map padding of 10, also marked as important */
@@ -22,4 +20,78 @@ div.location {
     margin-right: 10px;
     margin-left: 15px;
     padding-bottom: 0px !important;
+}
+
+
+.locations-output h2 {
+    text-transform: uppercase;
+}
+
+div.ucf-health-locationsmap{
+    width: 100%;
+}
+
+.locations-output .ucf-health-locationsmap {
+    width: 100%;
+    margin: 15px 0 35px 0;
+    height: 360px;
+}
+
+.locations-output iframe {
+    width: 100%;
+}
+
+.locations-output .selector-panel {
+    width: 100%;
+    min-height: 300px;
+    margin: 15px 0;
+}
+
+.locations-output .selector-panel * {
+    text-indent: 0;
+}
+
+.locations-output .selector-panel li {
+    list-style: none;
+    border-right: 2px solid #ececec;
+}
+
+.locations-output .selector-panel li a {
+    padding-left: 15px;
+}
+
+.locations-output .selector-panel li.selected {
+    border-right: none;
+}
+
+.locations-output .selector-panel li.selected a {
+    background: #f6f5f5;
+}
+
+.locations-output .selector-panel li ul {
+    width: 750px;
+    font-size: 16px;
+    line-height: 24px;
+    border-left: 2px solid #e0e0e0;
+}
+
+.locations-output .selector-panel .left {
+    width: 25%;
+}
+
+.locations-output .selector-panel .right {
+    width: 69%;
+    padding: 25px;
+    background: #f6f5f5;
+    margin-left: -5px;
+}
+
+.locations-output .selector-panel .right .location {
+    margin: 0 10px 10px 0;
+    display: inline-block;
+    float: left;
+    width: 150px;
+    padding: 10px;
+    text-align: center;
+    background: #57932b;
 }
