@@ -86,12 +86,16 @@ function register_location_js_css() {
  */
 function handle_shortcode( ) {
 
-	wp_enqueue_script( google_maps_register );
-	wp_enqueue_script( script_register );
-	wp_enqueue_style( style_register );
+	enqueue_files();
 
 	return get_location_content( );
 
+}
+
+function enqueue_files() {
+	wp_enqueue_script( google_maps_register );
+	wp_enqueue_script( script_register );
+	wp_enqueue_style( style_register );
 }
 
 
@@ -106,11 +110,14 @@ function get_location_content() {
 	/*
 	* Visible list of locations.
 	*/
-	$selector_panel = '';
+	$selector_panel_tabs = '';
 	$selector_panel_info = '';
+
 
 	// Get all the pins for the map
 	$pins = array();
+	$i = 0;
+	$show_first = true; // set to false to hide all details by default. true to show the first one.
 	while ( have_rows( 'pin_locations' ) ) {
 		the_row();
 
@@ -139,22 +146,44 @@ function get_location_content() {
 			$pin_info['longitude'] = get_sub_field('longitude');
 
 		}
-		// 4. Create an always-visible list entry (outside of the google map interface)
-		$selector_panel_info .= selector_panel_list_info( $pin_info );
 
-		$pin_info[ 'slug' ] = md5(json_encode($pin_info)); // use md5 to create a unique id that only changes when the pin data changes - for caching and unique id in html
+
+		$pin_info[ 'slug' ] = 'ucfh-' . md5(json_encode($pin_info));
+		// use md5 to create a unique id that only changes when the pin data changes - for caching and unique id in html
+		// note: ids MUST start with a letter, so prefix the md5 to prevent erros
+
 		$pins[$pin_info[ 'slug' ]] = $pin_info;
 
+		// 4. Create an always-visible list entry (outside of the google map interface)
+
+		if ($i === 0 && $show_first){
+			$show_current = true;
+		} else {
+			$show_current = false;
+		}
+
+		$selector_panel_tabs .= selector_panel_list_tab( $pin_info, $show_current );
+		$selector_panel_info .= selector_panel_list_info( $pin_info, $show_current );
+
+		$i++;
 	}
 
-	$unique_id_all_data = md5(json_encode($pins)); // generate another unique id for the parent object. this way, a page with multiple blocks won't interfere with one another.
+	$unique_id_all_data = 'ucfh-' . md5(json_encode($pins));
+	// generate another unique id for the parent object. this way, a page with multiple blocks won't interfere with one another.
+	// note: ids MUST start with a letter, so prefix the md5 to prevent erros
 
 	if ( get_field('panel_visible')) {
-		$selector_panel .= '<div class="info selector-panel locations" >';
-		$selector_panel .= '	<div class="right">';
-		$selector_panel .= $selector_panel_info;
-		$selector_panel .= '	hello</div>';
-		$selector_panel .= '</div>';
+		$selector_panel = "
+			<div class='info selector-panel locations' >
+				<ul class='nav nav-tabs' id='{$unique_id_all_data}-tabs' role='tablist' >
+					{$selector_panel_tabs}
+				</ul>
+				<div class='tab-content' id='{$unique_id_all_data}-content'>
+					{$selector_panel_info}
+				</div>
+			</div>
+		";
+
 	} else {
 		$selector_panel = '';
 	}
@@ -175,15 +204,34 @@ function get_location_content() {
  * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
  *
  * @param $location_array
- * @param $i List item number in array
+ * @param $is_selected boolean If true, marks this tab as active
  *
  * @return string
- * @deprecated Since 1.2. No longer use left tab navigation; instead, we show all results on the page.
  */
-function selector_panel_list_item( $location_array, $i ) {
+function selector_panel_list_tab( $location_array, $is_selected = false ) {
 	$location = json_decode( json_encode( $location_array ) );
+	$is_selected_string = $is_selected ? 'true' : 'false'; // convert boolean to string for js
+	$is_active_string = $is_selected ? 'active' : ''; // convert boolean to string for js
+	$tab = "
+		<li class='nav-item'>
+			<a 
+			class='nav-link {$is_active_string}' 
+			id='tab-{$location->slug}-tab' 
+			data-toggle='tab' 
+			href='#tab-{$location->slug}-content' 
+			role='tab' 
+			aria-controls='tab-{$location->slug}-content' 
+			aria-selected='{$is_selected_string}'
+			data-location='{$location->slug}'
+			>
+				{$location->name}
+			</a>
+		</li>
+	";
+	//$tab .= var_export($location_array, true);
 
-	return "<li class='locations {$location->slug}' data-location='{$location->slug}'><div class='location location-{$i}'></div><a href='#'>{$location->name}</a></li>";
+	return $tab;
+	//return "<li class='locations {$location->slug}' data-location='{$location->slug}'><div class='location location-{$i}'></div><a href='#'>{$location->name}</a></li>";
 
 }
 
@@ -191,51 +239,106 @@ function selector_panel_list_item( $location_array, $i ) {
  * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
  *
  * @param $location_array
- * @param $i List item number in array
+ * @param $is_selected boolean If true, marks this tab as active
  *
  * @return string
  */
-function selector_panel_list_info( $location_array ) {
-	//print_r($location_array);
+function selector_panel_list_info( $location_array, $is_selected = false) {
 	$location = json_decode( json_encode( $location_array ) );
-	$return   = "";
-	$return   .= "<div id='{$location->slug}' class='{$location->slug}-info info' data-location='{$location->slug}'>";
-	$return   .= "	<ul class=''>";
-	$return   .= "		<div class='third'>";
-	$return   .= "			<h2>" . nl2br( $location->name ) . "</h2>";
 
+	$address = "";
 	if ( $location->address ) {
-		$return .= "			<strong>Address:</strong><br />";
-		$return .= "			<p>" . nl2br( $location->address ) . "</p>";
-		$return .= " 			<p><strong>Directions:</strong></p>";
-		$return .= "			<a href='" . get_directions( $location ) . "' class='green map location' target='_blank'>Google Maps</a>";
-		$return .= "			<a href='" . get_directions_apple( $location ) . "' class='green map nomarker location ' target='_blank'>Apple iOS Maps</a>";
-		if ( $location->written_directions_pdf ) {
-			$return .= "			<a href='" . $location->written_directions_pdf . "' class='green map nomarker location ' target='_blank'>PDF Directions</a>";
+		$address .= "			
+			<strong>Address:</strong><br />
+			<p>" . nl2br( $location->address ) . "</p>
+			<a 
+			href='" . get_directions( $location ) . "' 
+			class='green map location' 
+			target='_blank'
+			>
+				Google Maps
+			</a>
+			<a 
+			href='" . get_directions_apple( $location ) . "' 
+			class='green map nomarker location ' 
+			target='_blank'
+			>
+				Apple iOS Maps
+			</a>
+			";
+		if ( $location->written_directions_pdf_file ) {
+			$address .= "
+			<a 
+			href='{$location->written_directions_pdf_file}' 
+			class='green map nomarker location ' 
+			target='_blank'
+			>
+				PDF Directions
+			</a>
+			";
 		}
 	}
-	$return .= "		</div>";
-	$return .= "		<div class='third'>";
+
+
+	$phone = "";
 	if ( $location->phone_number ) {
-		$return .= "			<strong>Phone:</strong><br />";
-		$return .= "			<p>" . nl2br( stripslashes( $location->phone_number ) ) . "</p>";
+		$phone .= "
+			<strong>Phone:</strong><br />
+			<p>" . nl2br( stripslashes( $location->phone_number ) ) . "</p>
+			";
 	}
 	if ( $location->fax_number ) {
-		$return .= "			<strong>Fax:</strong><br />";
-		$return .= "			<p>" . nl2br( $location->fax_number ) . "</p>";
+		$phone .= "
+			<strong>Fax:</strong><br />
+			<p>" . nl2br( $location->fax_number ) . "</p>
+			";
 	}
-	$return .= "		</div>";
-	$return .= "		<div class='third'>";
-	if ( $location->hours_of_operation ) {
-		$return .= "			<strong>Hours:</strong></br>";
-		$return .= "			<p>" . nl2br( $location->hours_of_operation ) . "</p>";
-	}
-	$return .= "			<p class='notice' >If you have a medical emergency, call 911.</p >";
-	$return .= "		</div>";
-	$return .= "    </ul>";
-	$return .= "</div>";
 
-	return $return;
+	$hours = "";
+	if ( $location->hours_of_operation ) {
+		$hours .= "
+			<strong>Hours:</strong></br>
+			<p>" . nl2br( $location->hours_of_operation ) . "</p>
+			<p class='notice' >If you have a medical emergency, call 911.</p >
+			";
+	}
+
+	$extra_classes = "";
+	if ($is_selected) {
+		$extra_classes .= " show active ";
+	}
+
+
+	$tab_content = "";
+	$tab_content .= "
+		<div 
+		class='tab-pane fade {$extra_classes}' 
+		id='tab-{$location->slug}-content' 
+		role='tabpanel' 
+		aria-labelledby='tab-{$location->slug}-tab'
+		>
+			<div 
+			id='tab-{$location->slug}-pininfo' 
+			class='tab-{$location->slug}-pininfo info' 
+			data-location='{$location->slug}'
+			>
+				<ul class=''>
+					<div class='third'>
+						<h2>" . nl2br( $location->name ) . "</h2>
+						{$address}
+					</div>
+					<div class='third'>
+						{$phone}
+					</div>
+					<div class='third'>
+						{$hours}
+					</div>
+				</ul>
+			</div>
+		</div>
+	";
+
+	return $tab_content;
 }
 
 /**
