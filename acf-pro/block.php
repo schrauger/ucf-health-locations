@@ -38,6 +38,7 @@ function create_block() {
 					'profile',
 					'person'
 				),
+				'mode'               => 'edit',
 				'enqueue_assets' => 'ucf_health_locations\\enqueue_files',
 			)
 		);
