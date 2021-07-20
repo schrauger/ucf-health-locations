@@ -299,7 +299,7 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 		$hours .= "
 			<strong>Hours:</strong></br>
 			<p>" . nl2br( $location->hours_of_operation ) . "</p>
-			<p class='notice' >If you have a medical emergency, call 911.</p >
+			<p class='alert alert-danger' >If you have a medical emergency, call 911.</p >
 			";
 	}
 
