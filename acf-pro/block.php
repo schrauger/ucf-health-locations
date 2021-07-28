@@ -290,22 +290,6 @@ function create_fields() {
 								'default_value'     => '',
 								'placeholder'       => '',
 							),
-							array(
-								'key'               => 'field_60d2540c25af3',
-								'label'             => 'Written Directs PDF File',
-								'name'              => 'written_directs_pdf_file',
-								'type'              => 'url',
-								'instructions'      => 'Optional - link to a PDF file with written driving instructions',
-								'required'          => 0,
-								'conditional_logic' => 0,
-								'wrapper'           => array(
-									'width' => '',
-									'class' => '',
-									'id'    => '',
-								),
-								'default_value'     => '',
-								'placeholder'       => '',
-							),
 						),
 					),
 					array(

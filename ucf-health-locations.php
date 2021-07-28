@@ -3,7 +3,7 @@
 Plugin Name: UCF Health locations taxonomy
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: Google map embed with a block layout and configuration.
-Version: 3.0.0-alpha-3
+Version: 3.0.0-alpha-4
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
@@ -129,7 +129,6 @@ function get_location_content() {
 		//$pin_info[ 'coordinates' ]              = get_sub_field( 'coordinates' ); // @TODO this is a group
 		$pin_info[ 'address' ]                  = get_sub_field( 'address' );
 		$pin_info[ 'url' ]                      = get_sub_field( 'url' );
-		$pin_info[ 'written_directs_pdf_file' ] = get_sub_field( 'written_directs_pdf_file' );
 		//$pin_info[''] = get_sub_field('');
 
 		while (have_rows('phone_number')){
@@ -266,17 +265,6 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 				Apple iOS Maps
 			</a>
 			";
-		if ( $location->written_directions_pdf_file ) {
-			$address .= "
-			<a 
-			href='{$location->written_directions_pdf_file}' 
-			class='green map nomarker location ' 
-			target='_blank'
-			>
-				PDF Directions
-			</a>
-			";
-		}
 	}
 
 
