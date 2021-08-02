@@ -250,20 +250,6 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 		$address .= "			
 			<strong>Address:</strong><br />
 			<p>" . nl2br( $location->address ) . "</p>
-			<a 
-			href='" . get_directions( $location ) . "' 
-			class='green map location' 
-			target='_blank'
-			>
-				Google Maps
-			</a>
-			<a 
-			href='" . get_directions_apple( $location ) . "' 
-			class='green map nomarker location ' 
-			target='_blank'
-			>
-				Apple iOS Maps
-			</a>
 			";
 	}
 
