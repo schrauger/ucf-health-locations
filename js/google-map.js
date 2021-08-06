@@ -169,10 +169,10 @@ function setup_google_map($) {
 function info_window_html(location_object) {
     let return_string = '';
     return_string += '<div class="info_window">';
-    return_string += '<div class="name"><strong><a style="font-size: 16px;" href="' + location_object[ 'directions_url' ] + '">' + location_object.name + '</a></strong></div>';
+    return_string += '<div class="name"><strong>' + location_object.name + '</strong></div>';
     return_string += '<p>' + nl2br(info_window_html_div_if_exists(location_object, 'description')) + '</p>';
-    return_string += '<strong>Directions:<div class="directions_url" target="_blank"><a href="' + location_object.directions_url + '">Google Maps</a> | <a href="' + location_object.directions_apple_url + '">Apple iOS Maps</a></div>';
-    //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
+    return_string += '<strong>Address:</strong>';
+      return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
     //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
     //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));
     //  return_string += info_window_html_div_if_exists(location_object, 'url');

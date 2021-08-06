@@ -3,7 +3,7 @@
 Plugin Name: UCF Health locations taxonomy
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: Google map embed with a block layout and configuration.
-Version: 3.0.0-alpha-5
+Version: 3.0.0-alpha-6
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
@@ -124,18 +124,20 @@ function get_location_content() {
 		$pin_info                               = array();
 		$pin_info[ 'name' ]                     = get_sub_field( 'name' );
 		$pin_info[ 'description' ]              = get_sub_field( 'description' );
-		//$pin_info[ 'phone_number' ]             = get_sub_field( 'phone_numbers' ); // @TODO this is a repeater
+		//$pin_info[ 'phone_numbers' ]             = get_sub_field( 'phone_numbers' ); // @TODO this is a repeater
 		$pin_info[ 'hours_of_operation' ]       = get_sub_field( 'hours_of_operation' );
 		//$pin_info[ 'coordinates' ]              = get_sub_field( 'coordinates' ); // @TODO this is a group
 		$pin_info[ 'address' ]                  = get_sub_field( 'address' );
 		$pin_info[ 'url' ]                      = get_sub_field( 'url' );
 		//$pin_info[''] = get_sub_field('');
 
-		while (have_rows('phone_number')){
+
+		while (have_rows('phone_numbers')){
 			the_row();
-			$type = get_sub_field('type');
+			//$type = get_sub_field('type');
 			$number = get_sub_field('number');
-			$pin_info['phone_number'][$type] = $number;
+			//$pin_info['phone_numbers'][$type] = $number;
+			$pin_info['phone_numbers'][] =  $number;
 		}
 
 		// coordinates are in a group, which also needs to be looped even though it isn't a repeater
@@ -251,15 +253,39 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 			<strong>Address:</strong><br />
 			<p>" . nl2br( $location->address ) . "</p>
 			";
+		/*$address .= "
+			<a
+			href='" . get_directions( $location ) . "' 
+			class='green map location' 
+			target='_blank'
+			>
+				Google Maps
+			</a>
+			<a 
+			href='" . get_directions_apple( $location ) . "' 
+			class='green map nomarker location ' 
+			target='_blank'
+			>
+				Apple iOS Maps
+			</a>
+			";*/
 	}
 
 
 	$phone = "";
-	if ( $location->phone_number ) {
-		$phone .= "
-			<strong>Phone:</strong><br />
-			<p>" . nl2br( stripslashes( $location->phone_number ) ) . "</p>
-			";
+	var_dump($location);
+	if ( $location->phone_numbers && count((array)$location->phone_numbers) > 0) {
+		$phone .= "<strong> Phone " . _n("Number", "Numbers", count((array)$location->phone_numbers)) . "</strong>";
+		$phone .= "<ul>";
+
+		foreach ($location->phone_numbers as $type => $number){
+			$phone .= "
+				<li>
+					<span class='phone-number'>{$number}</span>
+				</li>";
+		}
+
+		$phone .= "</ul>";
 	}
 	if ( $location->fax_number ) {
 		$phone .= "
@@ -297,14 +323,17 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 			data-location='{$location->slug}'
 			>
 				<ul class=''>
-					<div class='third'>
+					<div class=''>
+						<p>{$location->description}</p>
+					</div>
+					<div class=''>
 						<h2>" . nl2br( $location->name ) . "</h2>
 						{$address}
 					</div>
-					<div class='third'>
+					<div class=''>
 						{$phone}
 					</div>
-					<div class='third'>
+					<div class=''>
 						{$hours}
 					</div>
 				</ul>

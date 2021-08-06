@@ -129,7 +129,7 @@ function create_fields() {
 								'layout'            => 'table',
 								'button_label'      => '',
 								'sub_fields'        => array(
-									array(
+									/*array(
 										'key'               => 'field_60d2524525aeb',
 										'label'             => 'Type',
 										'name'              => 'type',
@@ -155,7 +155,7 @@ function create_fields() {
 										'return_format'     => 'value',
 										'ajax'              => 0,
 										'placeholder'       => '',
-									),
+									),*/
 									array(
 										'key'               => 'field_60d252dc25aec',
 										'label'             => 'Number',
