@@ -273,7 +273,6 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 
 
 	$phone = "";
-	var_dump($location);
 	if ( $location->phone_numbers && count((array)$location->phone_numbers) > 0) {
 		$phone .= "<strong> Phone " . _n("Number", "Numbers", count((array)$location->phone_numbers)) . "</strong>";
 		$phone .= "<ul>";
