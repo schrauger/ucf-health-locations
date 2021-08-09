@@ -3,7 +3,7 @@
 Plugin Name: UCF Health locations taxonomy
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: Google map embed with a block layout and configuration.
-Version: 3.0.0-alpha-6
+Version: 3.0.0-alpha-7
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
@@ -189,8 +189,10 @@ function get_location_content() {
 		$selector_panel = '';
 	}
 
+	$pins_json = esc_attr(json_encode($pins));
+	$html_input_name_locations = html_input_name_locations;
 	// All location data is in the array. Output it.
-	$json_object = '<input type="hidden" name="' . html_input_name_locations . '" data-locations=' . "'" . json_encode( $pins ) . "'" . ' />';
+	$json_object = "<input type='hidden' name='{$html_input_name_locations}' data-locations='{$pins_json}' />";
 
 	if ( get_field('map_visible') ) {
 		$map = "<section><div class='ucf-health-locationsmap'  ></div></section>";
@@ -250,7 +252,7 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 	$address = "";
 	if ( $location->address ) {
 		$address .= "			
-			<strong>Address:</strong><br />
+			<strong>Address</strong><br />
 			<p>" . nl2br( $location->address ) . "</p>
 			";
 		/*$address .= "
@@ -275,28 +277,24 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 	$phone = "";
 	if ( $location->phone_numbers && count((array)$location->phone_numbers) > 0) {
 		$phone .= "<strong> Phone " . _n("Number", "Numbers", count((array)$location->phone_numbers)) . "</strong>";
-		$phone .= "<ul>";
 
-		foreach ($location->phone_numbers as $type => $number){
+		foreach ($location->phone_numbers as $number){
 			$phone .= "
-				<li>
-					<span class='phone-number'>{$number}</span>
-				</li>";
+				<div class='phone-number'>{$number}</div>
+			";
 		}
-
-		$phone .= "</ul>";
 	}
-	if ( $location->fax_number ) {
+	/*if ( $location->fax_number ) {
 		$phone .= "
 			<strong>Fax:</strong><br />
 			<p>" . nl2br( $location->fax_number ) . "</p>
 			";
-	}
+	}*/
 
 	$hours = "";
 	if ( $location->hours_of_operation ) {
 		$hours .= "
-			<strong>Hours:</strong></br>
+			<strong>Hours</strong></br>
 			<p>" . nl2br( $location->hours_of_operation ) . "</p>
 			<p class='alert alert-danger' >If you have a medical emergency, call 911.</p >
 			";
@@ -321,18 +319,18 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 			class='tab-{$location->slug}-pininfo info' 
 			data-location='{$location->slug}'
 			>
-				<ul class=''>
-					<div class=''>
+				<ul class='health-location'> <!-- kept as <ul> due to legacy css rules. in practice, acts as a div. -->
+					<div class='location-description'>
 						<p>{$location->description}</p>
 					</div>
-					<div class=''>
+					<div class='location-address'>
 						<h2>" . nl2br( $location->name ) . "</h2>
 						{$address}
 					</div>
-					<div class=''>
+					<div class='location-phone-numbers'>
 						{$phone}
 					</div>
-					<div class=''>
+					<div class='location-hours'>
 						{$hours}
 					</div>
 				</ul>
