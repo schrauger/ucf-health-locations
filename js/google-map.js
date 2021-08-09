@@ -168,11 +168,13 @@ function setup_google_map($) {
 
 function info_window_html(location_object) {
     let return_string = '';
-    return_string += '<div class="info_window">';
-    return_string += '<div class="name"><strong>' + location_object.name + '</strong></div>';
-    return_string += '<p>' + nl2br(info_window_html_div_if_exists(location_object, 'description')) + '</p>';
-    return_string += '<strong>Address:</strong>';
-      return_string += nl2br(info_window_html_div_if_exists(location_object, 'address'));
+    return_string += '<div class="info_window pin health-location">';
+        return_string += '<div class="pin location-name"><h3>' + nl2br(location_object.name) + '</h3></div>';
+        return_string += '<div class="pin location-description">' + nl2br(location_object.description) + '</div>';
+        return_string += '<div class="pin location-address">';
+            return_string += '<h3>Address</h3>';
+            return_string += '<p>' + location_object.address + '</p>';
+        return_string += '</div>';
     //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
     //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));
     //  return_string += info_window_html_div_if_exists(location_object, 'url');
@@ -186,15 +188,20 @@ function info_window_html(location_object) {
  * @param location_object_property_key Ex address, description, name, etc
  * @returns {string}
  */
-function info_window_html_div_if_exists(location_object, location_object_property_key) {
+/*function info_window_html_div_if_exists(location_object, location_object_property_key) {
     if (location_object[ location_object_property_key ]) {
-        return '<div class="' + location_object_property_key + '">' + location_object[ location_object_property_key ] + '</div>'
+        return '<p class="pin location-address ' + location_object_property_key + '">' + location_object[ location_object_property_key ] + '</p>'
     } else {
         return '';
     }
-}
+}*/
 
-
+/**
+ * Converts newline characters into <br /> html tags, to show an actual new line.
+ * @param str
+ * @param is_xhtml
+ * @returns {string}
+ */
 function nl2br(str, is_xhtml) {
     let breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');

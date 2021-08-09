@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: UCF Health locations taxonomy
+Plugin Name: UCF Health Locations Map
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: Google map embed with a block layout and configuration.
-Version: 3.0.0-alpha-7
+Version: 3.0.0-alpha-8
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
@@ -252,7 +252,7 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 	$address = "";
 	if ( $location->address ) {
 		$address .= "			
-			<strong>Address</strong><br />
+			<h3>Address</h3><br />
 			<p>" . nl2br( $location->address ) . "</p>
 			";
 		/*$address .= "
