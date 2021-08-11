@@ -3,7 +3,7 @@
 Plugin Name: UCF Health Locations Map
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: Google map embed with a block layout and configuration.
-Version: 3.0.0-alpha-8
+Version: 3.0.0-alpha-9
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
@@ -124,10 +124,10 @@ function get_location_content() {
 		$pin_info                               = array();
 		$pin_info[ 'name' ]                     = get_sub_field( 'name' );
 		$pin_info[ 'description' ]              = get_sub_field( 'description' );
-		//$pin_info[ 'phone_numbers' ]             = get_sub_field( 'phone_numbers' ); // @TODO this is a repeater
+		$pin_info[ 'description_pin' ]              = apply_filters('the_content', get_sub_field( 'description' )); // apply_filters lets us render the shortcodes (athena) and use them in pins
 		$pin_info[ 'hours_of_operation' ]       = get_sub_field( 'hours_of_operation' );
-		//$pin_info[ 'coordinates' ]              = get_sub_field( 'coordinates' ); // @TODO this is a group
 		$pin_info[ 'address' ]                  = get_sub_field( 'address' );
+		$pin_info[ 'address_pin' ]                  = apply_filters('the_content',get_sub_field( 'address' ));
 		$pin_info[ 'url' ]                      = get_sub_field( 'url' );
 		//$pin_info[''] = get_sub_field('');
 
@@ -189,10 +189,7 @@ function get_location_content() {
 		$selector_panel = '';
 	}
 
-	$pins_json = esc_attr(json_encode($pins));
-	$html_input_name_locations = html_input_name_locations;
-	// All location data is in the array. Output it.
-	$json_object = "<input type='hidden' name='{$html_input_name_locations}' data-locations='{$pins_json}' />";
+	wp_localize_script(script_register, 'pin_data', $pins);
 
 	if ( get_field('map_visible') ) {
 		$map = "<section><div class='ucf-health-locationsmap'  ></div></section>";
@@ -200,7 +197,7 @@ function get_location_content() {
 		$map = '';
 	}
 
-	return "<div class='locations-output' id='{$unique_id_all_data}' >{$map}{$json_object}{$selector_panel}</div>";
+	return "<div class='locations-output' id='{$unique_id_all_data}' >{$map}{$selector_panel}</div>";
 }
 
 /**

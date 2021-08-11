@@ -44,7 +44,9 @@ function setup_google_map($) {
         ]);
 
         //Create points object
-        let points = $('#' + map_block_id + ' input[name="ucf_health_locations"]').data('locations'); // this input has a JSON object with all the info - see ucf_health_locations->insert_location_content()
+        let points;
+        points = $('#' + map_block_id + ' input[name="ucf_health_locations"]').data('locations'); // this input has a JSON object with all the info - see ucf_health_locations->insert_location_content()
+        points = pin_data;
         let locations = {}; // will contain just the latitude_X_longitude objects
 
         let map_icon_width = 18;
@@ -170,10 +172,10 @@ function info_window_html(location_object) {
     let return_string = '';
     return_string += '<div class="info_window pin health-location">';
         return_string += '<div class="pin location-name"><h3>' + nl2br(location_object.name) + '</h3></div>';
-        return_string += '<div class="pin location-description">' + nl2br(location_object.description) + '</div>';
+        return_string += '<div class="pin location-description">' + nl2br(location_object.description_pin) + '</div>';
         return_string += '<div class="pin location-address">';
             return_string += '<h3>Address</h3>';
-            return_string += '<p>' + location_object.address + '</p>';
+            return_string += '<p>' + location_object.address_pin + '</p>';
         return_string += '</div>';
     //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'hours_of_operation'));
     //  return_string += nl2br(info_window_html_div_if_exists(location_object, 'phone_number'));
