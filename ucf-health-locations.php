@@ -249,7 +249,7 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 	$address = "";
 	if ( $location->address ) {
 		$address .= "			
-			<h3>Address</h3><br />
+			<h3>Address</h3>
 			<p>" . nl2br( $location->address ) . "</p>
 			";
 		/*$address .= "
@@ -273,7 +273,7 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 
 	$phone = "";
 	if ( $location->phone_numbers && count((array)$location->phone_numbers) > 0) {
-		$phone .= "<strong> Phone " . _n("Number", "Numbers", count((array)$location->phone_numbers)) . "</strong>";
+		$phone .= "<h3> Phone " . _n("Number", "Numbers", count((array)$location->phone_numbers)) . "</h3>";
 
 		foreach ($location->phone_numbers as $number){
 			$phone .= "
@@ -291,7 +291,7 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 	$hours = "";
 	if ( $location->hours_of_operation ) {
 		$hours .= "
-			<strong>Hours</strong></br>
+			<h3>Hours</h3>
 			<p>" . nl2br( $location->hours_of_operation ) . "</p>
 			<p class='alert alert-danger' >If you have a medical emergency, call 911.</p >
 			";
