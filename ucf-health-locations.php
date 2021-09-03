@@ -3,7 +3,7 @@
 Plugin Name: UCF Health Locations Map
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: Google map embed with a block layout and configuration.
-Version: 3.0.0-alpha-10
+Version: 3.0.0-alpha-11
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
@@ -22,6 +22,7 @@ const directions_base_url       = 'https://www.google.com/maps/dir//'; // the do
 const directions_apple_base_url = 'http://maps.apple.com/?q';
 const script_register           = 'locations_google_map_js'; // arbitrary unique identifier
 const style_register            = 'locations_google_map_css';
+const style_register_plugin     = 'locations_css';
 const google_maps_register      = 'google-maps';
 const google_maps_key           = '//maps.googleapis.com/maps/api/js?key=AIzaSyB-Hs-bKrEM2KWp1gRYzbPM_qhw2yAysxY&sensor=true'; // js with our key.
 // we use the medweb@ucf.edu (ie med.organic.songs@gmail.com) account for our api.
@@ -35,7 +36,6 @@ add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\register_location_js_css'
 //add_shortcode( shortcode_slug, __NAMESPACE__ . '\\handle_shortcode' );
 //add_action( 'init', __NAMESPACE__ .  '\\initialize_shortcode' );
 
-register_location_js_css();
 /**
  * Adds the shortcode to wordpress' index of shortcodes
  */
@@ -55,7 +55,8 @@ function replacement() {
 
 /**
  *
- * adds the js and css to WordPress so it can enqueue them for pages that use the block
+ * adds the js and css to WordPress so it can enqueue them for pages that use the block.
+ * Don't forget to enqueue them later to actually print them on the page.
  */
 function register_location_js_css() {
 	wp_register_script( google_maps_register, google_maps_key );
@@ -68,11 +69,10 @@ function register_location_js_css() {
 		true
 	);
 	wp_register_style(
-		style_register,
+		style_register_plugin,
 		plugins_url( 'css/style.css', __FILE__ ),
 		array(),
-		filemtime( plugin_dir_path( __FILE__ ) . '/css/style.css' ),
-		true
+		filemtime( plugin_dir_path( __FILE__ ) . '/css/style.css' )
 	);
 }
 
@@ -96,6 +96,7 @@ function enqueue_files() {
 	wp_enqueue_script( google_maps_register );
 	wp_enqueue_script( script_register );
 	wp_enqueue_style( style_register );
+	wp_enqueue_style( style_register_plugin );
 }
 
 

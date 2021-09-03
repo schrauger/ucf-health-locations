@@ -172,7 +172,7 @@ function info_window_html(location_object) {
     let return_string = '';
     return_string += '<div class="info_window pin health-location">';
         return_string += '<div class="pin location-name"><h3>' + nl2br(location_object.name) + '</h3></div>';
-        return_string += '<div class="pin location-description">' + nl2br(location_object.description_pin) + '</div>';
+        //return_string += '<div class="pin location-description">' + nl2br(location_object.description_pin) + '</div>';
         return_string += '<div class="pin location-address">';
             return_string += '<h3>Address</h3>';
             return_string += '<p>' + location_object.address_pin + '</p>';

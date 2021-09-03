@@ -22,6 +22,10 @@ div.location {
     padding-bottom: 0px !important;
 }
 
+.pin.location-address a.badge {
+    margin-top: 10px;
+}
+
 
 .locations-output h2 {
     text-transform: uppercase;
