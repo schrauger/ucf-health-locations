@@ -177,10 +177,12 @@ function get_location_content() {
 	if ( get_field('panel_visible')) {
 		$selector_panel = "
 			<div class='info selector-panel locations' >
-				<ul class='nav nav-tabs' id='{$unique_id_all_data}-tabs' role='tablist' >
-					{$selector_panel_tabs}
-				</ul>
-				<div class='tab-content' id='{$unique_id_all_data}-content'>
+				<div class='nab-tab-area' >
+					<ul class='nav nav-tabs' id='{$unique_id_all_data}-tabs' role='tablist' >
+						{$selector_panel_tabs}
+					</ul>
+				</div>
+				<div class='tab-content' id='{$unique_id_all_data}-content' >
 					{$selector_panel_info}
 				</div>
 			</div>
@@ -193,7 +195,7 @@ function get_location_content() {
 	wp_localize_script(script_register, 'pin_data', $pins);
 
 	if ( get_field('map_visible') ) {
-		$map = "<section><div class='ucf-health-locationsmap'  ></div></section>";
+		$map = "<section class='ucf-health-locationsmap-container' ><div class='ucf-health-locationsmap'  ></div></section>";
 	} else {
 		$map = '';
 	}
