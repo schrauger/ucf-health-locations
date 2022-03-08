@@ -28,6 +28,7 @@
 
 .locations-output {
     display:  flex;
+    flex-wrap:  wrap;
 }
 
 .locations-output .selector-panel,
@@ -116,4 +117,13 @@
     font-size: 16px;
     line-height: 24px;
     border-left: 2px solid #e0e0e0;
+}
+
+@media (max-width: 999px) {
+
+    .locations-output .selector-panel,
+    .locations-output .ucf-health-locationsmap-container {
+        width:  100%;
+    }
+
 }
