@@ -3,7 +3,7 @@
 Plugin Name: UCF Health Locations Map
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: Google map embed with a block layout and configuration.
-Version: 3.0.0-alpha-11
+Version: 3.1
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
@@ -200,7 +200,7 @@ function get_location_content() {
 		$map = '';
 	}
 
-	return "<div class='locations-output' id='{$unique_id_all_data}' >{$map}{$selector_panel}</div>";
+	return "<div class='locations-output' id='{$unique_id_all_data}' >{$selector_panel}{$map}</div>";
 }
 
 /**
