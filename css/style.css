@@ -53,6 +53,7 @@
     margin: 0;
     padding: 20px 10px;
     background-color: #fcfcfc; 
+    width: 500px;
 }
 
 .locations-output .nav-tabs .nav-link.active {

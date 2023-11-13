@@ -197,7 +197,23 @@ function get_location_content() {
 	if ( get_field('map_visible') ) {
 		$map = "<section class='ucf-health-locationsmap-container' ><div class='ucf-health-locationsmap'  ></div></section>";
 	} else {
-		$map = '';
+		$map = '
+
+		<section class=\'ucf-health-locationsmap-container\' >
+
+			<h3>Address</h3>
+			<p>add address var</p>
+
+			<h3>Phone Number</h3>
+			<p>add phone var</p>
+
+			<h3>Hours</h3>
+			<p>add hours var</p>
+
+			<p class=\'alert alert-danger\' >If you have a medical emergency, call 911.</p >
+
+			</section>
+		';
 	}
 
 	return "<div class='locations-output' id='{$unique_id_all_data}' >{$selector_panel}{$map}</div>";
@@ -314,6 +330,9 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 		role='tabpanel' 
 		aria-labelledby='tab-{$location->slug}-tab'
 		>
+
+		<!-- INSERT IF MAP VISIBLE STATMENT HERE TO SHOW THESE -->
+
 			<div 
 			id='tab-{$location->slug}-pininfo' 
 			class='tab-{$location->slug}-pininfo info' 
