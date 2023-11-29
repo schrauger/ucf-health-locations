@@ -3,7 +3,7 @@
 Plugin Name: UCF Health Locations Map
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: Google map embed with a block layout and configuration.
-Version: 4.0
+Version: 4.0.1
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
@@ -315,7 +315,13 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 	$tab_location_content = "";
 
 
-	$tab_location_content = "
+	$tab_content .= "
+		<div 
+		class='tab-pane fade {$extra_classes}' 
+		id='tab-{$location->slug}-content' 
+		role='tabpanel' 
+		aria-labelledby='tab-{$location->slug}-tab'
+		>
 			<div 
 			id='tab-{$location->slug}-pininfo' 
 			class='tab-{$location->slug}-pininfo info' 
@@ -326,7 +332,7 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 						<p>{$location->description}</p>
 					</div>
 					<div class='location-address'>
-						<h2>" . nl2br($location->name) . "</h2>
+						<h2>" . nl2br( $location->name ) . "</h2>
 						{$address}
 					</div>
 					<div class='location-phone-numbers'>
@@ -340,15 +346,6 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 		</div>
 	";
 
-	$tab_content .= "
-		<div 
-		class='tab-pane fade {$extra_classes}' 
-		id='tab-{$location->slug}-content' 
-		role='tabpanel' 
-		aria-labelledby='tab-{$location->slug}-tab'
-		>
-		{$tab_location_content}
-		</div>";
 	return $tab_content;
 }
 
@@ -394,34 +391,6 @@ function selector_side_list_info( $location_array) {
 
 
 	$side_content = "";
-
-
-	$side_location_content = "
-			<div 
-			id='tab-{$location->slug}-pininfo' 
-			class='tab-{$location->slug}-pininfo info' 
-			data-location='{$location->slug}'
-			>
-				<ul class='health-location'> <!-- kept as <ul> due to legacy css rules. in practice, acts as a div. -->
-					<div class='location-description'>
-						<p>{$location->description}</p>
-					</div>
-					<div class='location-address'>
-						<h2>" . nl2br($location->name) . "</h2>
-						{$address}
-					</div>
-					<div class='location-phone-numbers'>
-						{$phone}
-					</div>
-					<div class='location-hours'>
-						{$hours}
-					</div>
-				</ul>
-			</div>
-		</div>
-	";
-
-
 	$side_content .= "
 		<section class='ucf-health-locationsmap-container' >
 			{$address}	
