@@ -3,7 +3,7 @@
 Plugin Name: UCF Health Locations Map
 Plugin URI: https://github.com/schrauger/ucf-health-locations
 Description: Google map embed with a block layout and configuration.
-Version: 3.1
+Version: 4.0
 Author: Stephen Schrauger
 Author URI: https://www.schrauger.com/
 License: GPLv2 or later
@@ -113,7 +113,7 @@ function get_location_content() {
 	*/
 	$selector_panel_tabs = '';
 	$selector_panel_info = '';
-
+	$side_panel_info = '';
 
 	// Get all the pins for the map
 	$pins = array();
@@ -166,7 +166,7 @@ function get_location_content() {
 
 		$selector_panel_tabs .= selector_panel_list_tab( $pin_info, $show_current );
 		$selector_panel_info .= selector_panel_list_info( $pin_info, $show_current );
-
+		$side_panel_info .= selector_side_list_info($pin_info);
 		$i++;
 	}
 
@@ -197,26 +197,15 @@ function get_location_content() {
 	if ( get_field('map_visible') ) {
 		$map = "<section class='ucf-health-locationsmap-container' ><div class='ucf-health-locationsmap'  ></div></section>";
 	} else {
-		$map = '
-
-		<section class=\'ucf-health-locationsmap-container\' >
-
-			<h3>Address</h3>
-			<p>add address var</p>
-
-			<h3>Phone Number</h3>
-			<p>add phone var</p>
-
-			<h3>Hours</h3>
-			<p>add hours var</p>
-
-			<p class=\'alert alert-danger\' >If you have a medical emergency, call 911.</p >
-
-			</section>
-		';
+		$map = "";
 	}
 
-	return "<div class='locations-output' id='{$unique_id_all_data}' >{$selector_panel}{$map}</div>";
+	$side_info = "";
+	if (!(get_field('map_visible')) && (!(get_field('panel_visible')))){
+		$side_info = "<section class='ucf-health-locationsmap-container' >{$side_panel_info}</section>";
+	}
+
+	return "<div class='locations-output' id='{$unique_id_all_data}' >{$selector_panel}{$map}{$side_info}</div>";
 }
 
 /**
@@ -323,16 +312,10 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 
 
 	$tab_content = "";
-	$tab_content .= "
-		<div 
-		class='tab-pane fade {$extra_classes}' 
-		id='tab-{$location->slug}-content' 
-		role='tabpanel' 
-		aria-labelledby='tab-{$location->slug}-tab'
-		>
+	$tab_location_content = "";
 
-		<!-- INSERT IF MAP VISIBLE STATMENT HERE TO SHOW THESE -->
 
+	$tab_location_content = "
 			<div 
 			id='tab-{$location->slug}-pininfo' 
 			class='tab-{$location->slug}-pininfo info' 
@@ -343,7 +326,7 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 						<p>{$location->description}</p>
 					</div>
 					<div class='location-address'>
-						<h2>" . nl2br( $location->name ) . "</h2>
+						<h2>" . nl2br($location->name) . "</h2>
 						{$address}
 					</div>
 					<div class='location-phone-numbers'>
@@ -357,7 +340,95 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 		</div>
 	";
 
+	$tab_content .= "
+		<div 
+		class='tab-pane fade {$extra_classes}' 
+		id='tab-{$location->slug}-content' 
+		role='tabpanel' 
+		aria-labelledby='tab-{$location->slug}-tab'
+		>
+		{$tab_location_content}
+		</div>";
 	return $tab_content;
+}
+
+/**
+ * Creates the list item for a specific location. This is shown in a <ul> on the locations page.
+ *
+ * @param $location_array
+ * @param $is_selected boolean If true, marks this tab as active
+ *
+ * @return string
+ */
+function selector_side_list_info( $location_array) {
+	$location = json_decode( json_encode( $location_array ) );
+
+	$address = "";
+	if ( $location->address ) {
+		$address .= "			
+			<h3>Address</h3>
+			<p>" . nl2br( $location->address ) . "</p>
+			";
+	}
+
+
+	$phone = "";
+	if ( $location->phone_numbers && count((array)$location->phone_numbers) > 0) {
+		$phone .= "<h3> Phone " . _n("Number", "Numbers", count((array)$location->phone_numbers)) . "</h3>";
+
+		foreach ($location->phone_numbers as $number){
+			$phone .= "
+				<div class='phone-number'>{$number}</div>
+			";
+		}
+	}
+
+	$hours = "";
+	if ( $location->hours_of_operation ) {
+		$hours .= "
+			<h3>Hours</h3>
+			<p>" . nl2br( $location->hours_of_operation ) . "</p>
+			<p class='alert alert-danger' >If you have a medical emergency, call 911.</p >
+			";
+	}
+
+
+	$side_content = "";
+
+
+	$side_location_content = "
+			<div 
+			id='tab-{$location->slug}-pininfo' 
+			class='tab-{$location->slug}-pininfo info' 
+			data-location='{$location->slug}'
+			>
+				<ul class='health-location'> <!-- kept as <ul> due to legacy css rules. in practice, acts as a div. -->
+					<div class='location-description'>
+						<p>{$location->description}</p>
+					</div>
+					<div class='location-address'>
+						<h2>" . nl2br($location->name) . "</h2>
+						{$address}
+					</div>
+					<div class='location-phone-numbers'>
+						{$phone}
+					</div>
+					<div class='location-hours'>
+						{$hours}
+					</div>
+				</ul>
+			</div>
+		</div>
+	";
+
+
+	$side_content .= "
+		<section class='ucf-health-locationsmap-container' >
+			{$address}	
+			{$phone}
+			{$hours}
+		</section>";
+	return $side_content;
 }
 
 /**
