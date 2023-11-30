@@ -177,14 +177,16 @@ function get_location_content() {
 	if ( get_field('panel_visible')) {
 		$selector_panel = "
 			<div class='info selector-panel locations' >
-				<div class='nab-tab-area' >
+				<div class='nav-tab-area' >
 					<ul class='nav nav-tabs' id='{$unique_id_all_data}-tabs' role='tablist' >
 						{$selector_panel_tabs}
+						<p class='mt-3 text-danger font-size-sm'>If you have a medical emergency, please call 911.</p >
 					</ul>
 				</div>
 				<div class='tab-content' id='{$unique_id_all_data}-content' >
 					{$selector_panel_info}
 				</div>
+
 			</div>
 		";
 
@@ -301,7 +303,7 @@ function selector_panel_list_info( $location_array, $is_selected = false) {
 		$hours .= "
 			<h3>Hours</h3>
 			<p>" . nl2br( $location->hours_of_operation ) . "</p>
-			<p class='alert alert-danger' >If you have a medical emergency, call 911.</p >
+		
 			";
 	}
 
@@ -385,7 +387,6 @@ function selector_side_list_info( $location_array) {
 		$hours .= "
 			<h3>Hours</h3>
 			<p>" . nl2br( $location->hours_of_operation ) . "</p>
-			<p class='alert alert-danger' >If you have a medical emergency, call 911.</p >
 			";
 	}
 

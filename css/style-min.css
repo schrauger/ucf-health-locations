@@ -28,30 +28,44 @@
 
 .locations-output {
     display:  flex;
+    flex-wrap:  wrap;
+    width: 100%;
 }
 
-.locations-output .selector-panel,
-.locations-output .ucf-health-locationsmap-container {
-    width:  50%;
+.locations-output .selector-panel {
+    width: 100%;
+    overflow: auto;
 }
 
 .locations-output .ucf-health-locationsmap-container {
-
+    margin-bottom: 15px;
+    width: 100%;
+}
+.locations-output .ucf-health-locationsmap-container:first-child {
+    border-bottom: 2px solid #ccc;
 }
 
 .locations-output h2 {
     text-transform: uppercase;
 }
 
+.locations-output .nav-tab-area {
+    width: 40%;
+    float: left;
+}
+
 .locations-output .nav-tabs {
     margin-bottom: 1.5rem;
     border: none;
+    display: block;
 }
 
 .locations-output .nav-tabs .nav-link {
     margin: 0;
     padding: 20px 10px;
     background-color: #fcfcfc; 
+    width: 100%;
+    display: block;
 }
 
 .locations-output .nav-tabs .nav-link.active {
@@ -66,6 +80,8 @@
 
 .locations-output .tab-content {
     overflow:  auto;
+    width: 60%;
+    padding-left: 2rem;
 }
 
 .locations-output .tab-content ul {      
@@ -97,7 +113,6 @@
 
 .locations-output .selector-panel li {
     list-style: none;
-    border-right: 2px solid #ececec;
 }
 
 .locations-output .selector-panel li a {
@@ -116,4 +131,13 @@
     font-size: 16px;
     line-height: 24px;
     border-left: 2px solid #e0e0e0;
+}
+
+@media (max-width: 999px) {
+
+    .locations-output .selector-panel,
+    .locations-output .ucf-health-locationsmap-container {
+        width:  100%;
+    }
+
 }
